@@ -1,0 +1,310 @@
+﻿<Page
+    x:Class="OpenVehicle.Test.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenVehicle.Test"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Hub Header="Open Vehicle Monitoring System" x:Name="HubMain">
+            <HubSection Header="Settings" x:Name="HubSec1">
+                <DataTemplate x:DataType="local:MainViewModel">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="400">
+                        <TextBlock Text="This is a simple Universal Windows App to demonstrate how to connect to the OVMS server and retrieve car data." TextWrapping="Wrap"/>
+                        <TextBlock Text=""/>
+                        <TextBlock Text="It is not intended to be a full-featured OVMS app." TextWrapping="Wrap"/>
+                        <TextBlock Text=""/>
+
+                        <TextBlock x:Name="lblServer" Text="Server" />
+                        <TextBox x:Name="txtServer" Text="{x:Bind Path=CarSettings.ovmsServer, Mode=TwoWay}" Width="300" HorizontalAlignment="Left" />
+
+                        <TextBlock x:Name="lblPort" Text="Port" />
+                        <TextBox x:Name="txtPort" Text="{x:Bind Path=CarSettings.ovmsPort, Mode=TwoWay}" InputScope="Number" Width="100" HorizontalAlignment="Left" />
+
+                        <TextBlock Text=""/>
+                        <TextBlock x:Name="lblSelVehicleId" Text="Vehicle ID" />
+                        <TextBox x:Name="txtSelVehicleId" Text="{x:Bind Path=CarSettings.selVehicleId, Mode=TwoWay}" Width="300" HorizontalAlignment="Left" />
+
+                        <TextBlock x:Name="lblSelServerPwd" Text="Vehicle Server Password" />
+                        <TextBox x:Name="txtSelServerPwd" Text="{x:Bind Path=CarSettings.selServerPwd, Mode=TwoWay}" Width="300" HorizontalAlignment="Left" />
+
+                        <TextBlock Text=""/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="btnConnect" Content="Connect" Click="BtnConnect_Click" />
+                            <TextBlock Text="{x:Bind ConnectStatus, Mode=OneWay}" Padding="25,6,0,0" />
+                        </StackPanel>
+
+                        <TextBlock Text=""/>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="grpUnitTemp" Content="Celcius" Tag="C" Checked="UnitTemp_Checked" IsChecked="True"/>
+                            <RadioButton GroupName="grpUnitTemp" Content="Fahrenheit" Tag="F" Checked="UnitTemp_Checked" />
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="Vehicle Info" x:Name="HubSec2">
+                <DataTemplate x:DataType="local:MainViewModel">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Vehicle" Width="100"/>
+                            <TextBlock Text="{x:Bind CarSettings.selVehicleId, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="VIN" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.car_vin, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Type" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.car_type, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="GSM" Width="100"/>
+                            <TextBlock>
+                                <Run Text="{x:Bind CarData.gsm_bars, Mode=OneWay}" />
+                                <Run Text=" bars,  " />
+                                <Run Text="{x:Bind CarData.gsm_dbm, Mode=OneWay}" />
+                                <Run Text=" dbm" />
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="SOH" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.bat_soh, Mode=OneWay}" />
+                        </StackPanel>
+
+                        <TextBlock Text="" />
+                        <TextBlock Text="OVMS Firmware:" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Server" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.server_firmware, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Car" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.car_firmware, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="App" Width="100"/>
+                            <TextBlock Text="{x:Bind AppVersion, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="Battery" x:Name="HubSec3">
+                <DataTemplate x:DataType="local:MainViewModel">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="SOC" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.bat_soc, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="CAC" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.bat_cac, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="SOH" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.bat_soh, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="12V" Width="120"/>
+                            <TextBlock>
+                                <Run Text="{x:Bind CarData.bat_12v_voltage, Mode=OneWay}" />
+                                <Run Text="  (ref=" />
+                                <Run Text="{x:Bind CarData.bat_12v_voltage_ref, Mode=OneWay}" />
+                                <Run Text=")  " />
+                                <Run Text="{x:Bind CarData.bat_12v_current, Mode=OneWay}" />
+                            </TextBlock>
+                        </StackPanel>
+
+                        <TextBlock Text="" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Charging" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.env_charging, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Charge mode" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.charge_mode, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Charge state" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.charge_state, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Charge substate" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.charge_substate, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Charge voltage" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.charge_voltagecurrent, Mode=OneWay}" />
+                        </StackPanel>
+
+                        <TextBlock Text=""/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Charge duration" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.charge_duration, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Charge estimate" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.charge_estimate, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="Car" x:Name="HubSec4">
+                <DataTemplate x:DataType="local:MainViewModel">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Started" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.env_started, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Speed" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.pos_speed, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Trip meter" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.pos_tripmeter, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Odometer" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.pos_odometer, Mode=OneWay}" />
+                        </StackPanel>
+                        
+                        <TextBlock Text="" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Motor temp" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.temp_motor, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Battery temp" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.temp_battery, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Cabin temp" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.temp_cabin, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Ambient temp" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.temp_ambient, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="Doors" x:Name="HubSec5">
+                <DataTemplate x:DataType="local:MainViewModel">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Locked" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.env_locked, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Front left open" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.door_frontleft_open, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Front right open" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.door_frontright_open, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Rear left open" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.door_rearleft_open, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Rear right open" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.door_rearright_open, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Trunk open" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.door_trunk_open, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Bonnet open" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.door_bonnet_open, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Charge port open" Width="120"/>
+                            <TextBlock Text="{x:Bind CarData.door_chargeport_open, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="Location" x:Name="HubSec6">
+                <DataTemplate x:DataType="local:MainViewModel">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Lattitude" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.pos_latitude, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Longitude" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.pos_longitude, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Altitude" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.pos_altitude, Mode=OneWay}" />
+                        </StackPanel>
+                        
+                        <TextBlock Text="" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Direction" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.pos_direction, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="GPS speed" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.pos_gpsspeed, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="GPS lock" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.pos_gpslock_raw, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="Tyres" x:Name="HubSec7">
+                <DataTemplate x:DataType="local:MainViewModel">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Pressure:" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Front left" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.tpms_fl_pressure, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Front right" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.tpms_fr_pressure, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Rear left" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.tpms_rl_pressure, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Rear right" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.tpms_rr_pressure, Mode=OneWay}" />
+                        </StackPanel>
+
+                        <TextBlock Text="" />
+                        <TextBlock Text="Temperature:" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Front left" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.tpms_fl_temp, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Front right" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.tpms_fr_temp, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Rear left" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.tpms_rl_temp, Mode=OneWay}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Rear right" Width="100"/>
+                            <TextBlock Text="{x:Bind CarData.tpms_rr_temp, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+        </Hub>
+
+    </Grid>
+</Page>
