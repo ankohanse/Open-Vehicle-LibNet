@@ -34,7 +34,7 @@ using OpenVehicle.LibNet.Entities;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml;
 
-namespace OpenVehicle.Test
+namespace OpenVehicle.Demo
 {
     // Note: we use Fody to inject INotifyPropertyChanged code into all property setters
     //

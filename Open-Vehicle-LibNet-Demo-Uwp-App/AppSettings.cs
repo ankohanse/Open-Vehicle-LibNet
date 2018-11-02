@@ -30,7 +30,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 
-namespace OpenVehicle.Test
+namespace OpenVehicle.Demo
 {
     public static class AppSettings 
     { 
@@ -53,7 +53,7 @@ namespace OpenVehicle.Test
 
         private static string GetSettingsFilePath() 
         { 
-            return Path.Combine(Environment.CurrentDirectory, "Open-Vehicle-Test-Uwp-App.exe.config"); 
+            return Path.Combine(Environment.CurrentDirectory, "Open-Vehicle-Demo-App.exe.config"); 
         } 
 
     }

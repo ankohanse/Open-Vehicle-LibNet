@@ -1,7 +1,7 @@
 ﻿<Application
-    x:Class="OpenVehicle.Test.App"
+    x:Class="OpenVehicle.Demo.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:OpenVehicle.Test">
+    xmlns:local="using:OpenVehicle.Demo">
 
 </Application>

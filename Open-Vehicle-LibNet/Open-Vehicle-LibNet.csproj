@@ -3,11 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>OpenVehicle.LibNet</RootNamespace>
+    <Authors>Anko Hanse</Authors>
+    <Company>Open Vehicle</Company>
+    <Copyright>Copyright (c) 2018 Open Vehicles</Copyright>
+    <Product>Open-Vehicle Monitoring System</Product>
+    <PackageProjectUrl>https://github.com/ankohanse/Open-Vehicle-Windows</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/ankohanse/Open-Vehicle-Windows/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageTags>Open Vehicle Monitoring System OVMS EV</PackageTags>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Entities\CarData - Copy.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Fody" Version="3.2.15">

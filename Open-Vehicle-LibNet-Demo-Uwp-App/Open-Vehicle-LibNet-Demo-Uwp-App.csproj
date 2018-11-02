@@ -7,8 +7,8 @@
     <ProjectGuid>{F6954FA7-3388-414C-B9F9-D94E0F27490C}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenVehicle.Test</RootNamespace>
-    <AssemblyName>Open-Vehicle-Test-Uwp-App</AssemblyName>
+    <RootNamespace>OpenVehicle.Demo</RootNamespace>
+    <AssemblyName>Open-Vehicle-Demo-App</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17134.0</TargetPlatformVersion>
@@ -107,10 +107,12 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="App.config" />
-    <None Include="Open-Vehicle-Test-Uwp-App_TemporaryKey.pfx" />
+    <None Include="Open-Vehicle-LibNet-Demo-Uwp-App_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NLog.config" />
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="FodyWeavers.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />

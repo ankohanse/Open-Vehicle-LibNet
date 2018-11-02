@@ -36,7 +36,7 @@ using System.Threading.Tasks;
 using OpenVehicle.LibNet;
 using OpenVehicle.LibNet.Entities;
 
-namespace OpenVehicle.Test
+namespace OpenVehicle.Demo
 {
     class Program
     {
@@ -53,7 +53,7 @@ namespace OpenVehicle.Test
         static async Task Main(string[] args)
         {
             logger.Info("------------------------------------");
-            logger.Info("Open-Vehicle-Test-Net-Shell starting");
+            logger.Info("Open-Vehicle-Demo-Net-Shell starting");
 
             // Attach our Progress Handler
             OVMSService.Instance.OnProgress += OnProgress;
@@ -135,7 +135,7 @@ namespace OpenVehicle.Test
 
             await OVMSService.Instance.StopAsync();
 
-            logger.Info("Open-Vehicle-Test-Net-Shell stopped");
+            logger.Info("Open-Vehicle-Demo-Net-Shell stopped");
         }
 
 

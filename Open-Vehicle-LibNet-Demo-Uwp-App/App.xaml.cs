@@ -32,7 +32,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace OpenVehicle.Test
+namespace OpenVehicle.Demo
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

@@ -5,13 +5,14 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Open-Vehicle-LibNet", "Open-Vehicle-LibNet\Open-Vehicle-LibNet.csproj", "{2152E8A3-D989-4FC9-8B78-EE15E08FD184}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Open-Vehicle-Test-Net-Shell", "Open-Vehicle-Test-Net-Shell\Open-Vehicle-Test-Net-Shell.csproj", "{D2682378-9456-45A4-B5F7-56E88A95FFFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Open-Vehicle-LibNet-Demo-Net-Shell", "Open-Vehicle-LibNet-Demo-Net-Shell\Open-Vehicle-LibNet-Demo-Net-Shell.csproj", "{D2682378-9456-45A4-B5F7-56E88A95FFFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Open-Vehicle-Test-Uwp-App", "Open-Vehicle-Test-Uwp-App\Open-Vehicle-Test-Uwp-App.csproj", "{F6954FA7-3388-414C-B9F9-D94E0F27490C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Open-Vehicle-LibNet-Demo-Uwp-App", "Open-Vehicle-LibNet-Demo-Uwp-App\Open-Vehicle-LibNet-Demo-Uwp-App.csproj", "{F6954FA7-3388-414C-B9F9-D94E0F27490C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1B0A5AD7-3BAE-4BF2-BC3A-643E7347FDB3}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global

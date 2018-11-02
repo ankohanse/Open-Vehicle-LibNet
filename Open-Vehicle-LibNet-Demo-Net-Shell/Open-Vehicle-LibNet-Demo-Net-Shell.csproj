@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D2682378-9456-45A4-B5F7-56E88A95FFFB}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>OpenVehicle.Test</RootNamespace>
-    <AssemblyName>Open-Vehicle-Test</AssemblyName>
+    <RootNamespace>OpenVehicle.Demo</RootNamespace>
+    <AssemblyName>Open-Vehicle-Demo-Shell</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -75,6 +75,7 @@
     <None Include="App.config" />
     <None Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
