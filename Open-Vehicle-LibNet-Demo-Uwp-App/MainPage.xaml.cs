@@ -83,8 +83,8 @@ namespace OpenVehicle.Demo
             switch (radio.Tag.ToString())
             {
                 default:
-                case "C": ViewModel.Preferences.UnitForTemperature = Preferences.UnitTemperature.Celcius; break;
-                case "F": ViewModel.Preferences.UnitForTemperature = Preferences.UnitTemperature.Fahrenheit; break;
+                case "C": ViewModel.Preferences.UnitForTemperature = OVMSPreferences.UnitTemperature.Celcius; break;
+                case "F": ViewModel.Preferences.UnitForTemperature = OVMSPreferences.UnitTemperature.Fahrenheit; break;
             }
             ViewModel.OnPreferencesChanged();
         }

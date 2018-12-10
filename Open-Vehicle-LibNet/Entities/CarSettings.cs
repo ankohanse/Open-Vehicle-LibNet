@@ -34,19 +34,20 @@ namespace OpenVehicle.LibNet.Entities
     //
     public class CarSettings : INotifyPropertyChanged
     {
-
         #region properties
-       
         #pragma warning disable IDE1006 // Naming Styles
-        public string ovmsServer        { get; set; }
-        public int    ovmsPort          { get; set; }
 
-        public string selVehicleId      { get; set; }
-        public string selVehicleLabel   { get; set; }
-        public string selVehicleImage   { get; set; }
-        public string selServerPwd      { get; set; }
-        public string selModulePwd      { get; set; }
+        public string ovms_server       { get; set; }
+        public int    ovms_port         { get; set; }
 
+        public string vehicle_id        { get; set; }
+        public string vehicle_label     { get; set; }
+        public string vehicle_image     { get; set; }
+
+        public string server_pwd        { get; set; }
+        public string module_pwd        { get; set; }
+
+        #pragma warning restore IDE1006 // Naming Styles
         #endregion properties
 
 
@@ -55,23 +56,44 @@ namespace OpenVehicle.LibNet.Entities
         public CarSettings ()
         {
             // Initialize with defaults
-            ovmsServer          = "tmc.openvehicles.com";
-            ovmsPort            = 6867;
+            ovms_server       = "tmc.openvehicles.com";
+            ovms_port         = 6867;
             
-            selVehicleId        = "DEMO";
-            selVehicleLabel     = "Demonstration Car";
-            selServerPwd        = "DEMO";
+            vehicle_id        = "DEMO";
+            vehicle_label     = "Demonstration Car";
+            vehicle_image     = "";
+
+            server_pwd        = "DEMO";
+            module_pwd        = "DEMO";
         }
 
         #endregion construction
 
-        
+
+        #region Cloning
+
+        public void CloneFrom(CarSettings src)
+        {
+            ovms_server       = src.ovms_server;  
+            ovms_port         = src.ovms_port;    
+            
+            vehicle_id        = src.vehicle_id;   
+            vehicle_label     = src.vehicle_label;
+            vehicle_image     = src.vehicle_image;
+
+            server_pwd        = src.server_pwd;   
+            module_pwd        = src.module_pwd;   
+        }
+
+        #endregion Cloning
+
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
         
 
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             // Raise the PropertyChanged event, passing the name of the property whose value has changed.
             this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));

@@ -49,7 +49,7 @@ namespace OpenVehicle.Demo
         public CarData                  CarData         { get; private set; }  = OVMSService.Instance.CarData;
 
         // App preferences
-        public Preferences              Preferences     { get; private set; }  = Preferences.Instance;
+        public OVMSPreferences              Preferences     { get; private set; }  = OVMSPreferences.Instance;
 
         // Connect status of the OVMSService
         public string                   ConnectStatus   { get; private set; }  = "Disconnected";
@@ -71,11 +71,11 @@ namespace OpenVehicle.Demo
             // Set CarSettings from App.config
             CarSettings = new CarSettings()
             {
-                ovmsServer      = AppSettings.GetSetting("ovmsServer"),
-                ovmsPort        = int.Parse(AppSettings.GetSetting("ovmsPort")),                 
-                selVehicleId    = AppSettings.GetSetting("selVehicleId"),
-                selVehicleLabel = AppSettings.GetSetting("selVehicleLabel"),
-                selServerPwd    = AppSettings.GetSetting("selServerPwd"),
+                ovms_server      = AppSettings.GetSetting("ovmsServer"),
+                ovms_port        = int.Parse(AppSettings.GetSetting("ovmsPort")),                 
+                vehicle_id    = AppSettings.GetSetting("selVehicleId"),
+                vehicle_label = AppSettings.GetSetting("selVehicleLabel"),
+                server_pwd    = AppSettings.GetSetting("selServerPwd"),
             };
 
             // Link our Progress Handler

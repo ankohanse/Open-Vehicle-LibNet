@@ -1,0 +1,99 @@
+﻿<UserControl
+    x:Class="OpenVehicle.App.UserControl.ClimatePageItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenVehicle.App.UserControl"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid>
+
+        <StackPanel 
+            x:Name="PanelControl"  
+            Orientation="Horizontal" 
+            Margin="2"
+            Padding="{x:Bind Padding}"
+            >
+            
+            <TextBlock 
+                x:Name="CaptionControl" 
+                Text="{x:Bind LabelText, Mode=OneTime}" 
+                Style="{ThemeResource BaseTextBlockStyle}" 
+                VerticalAlignment="Center"
+                Width="100" 
+                Visibility="{x:Bind IsCaption, Converter={StaticResource booleanToVisibilityConverter}}" 
+                />
+            <TextBlock 
+                x:Name="LabelControl" 
+                Text="{x:Bind LabelText, Mode=OneTime}" 
+                Width="100" 
+                Visibility="{x:Bind ShowLabel, Converter={StaticResource booleanToVisibilityConverter}}" 
+                />
+            <TextBlock
+                x:Name="ValueControl" 
+                Text="{x:Bind ValueText, Mode=OneWay}" 
+                TextWrapping="Wrap" 
+                TextAlignment="Right"
+                Width="90"  
+                Visibility="{x:Bind ShowValue, Converter={StaticResource booleanToVisibilityConverter}}" 
+                />
+            <Button
+                x:Name="ButtonControl"
+                Content="{x:Bind ButtonText}"
+                Width="100" 
+                VerticalAlignment="Center" 
+                Margin="20,0,0,0" 
+                Visibility="{x:Bind ShowButton, Converter={StaticResource booleanToVisibilityConverter}, Mode=OneWay}"
+                Click="OnButtonClick" />
+        </StackPanel>
+
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <!-- VisualState to be triggered when window
+                                 width is >=720 effective pixels. -->
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="PanelControl.Margin" Value="2" />
+                        <Setter Target="CaptionControl.Width" Value="100" />
+                        <Setter Target="LabelControl.Width" Value="100" />
+                        <Setter Target="ValueControl.Width" Value="70" />
+                        <Setter Target="ButtonControl.Width" Value="100" />
+                        <Setter Target="CaptionControl.FontSize" Value="14" />
+                        <Setter Target="LabelControl.FontSize" Value="14" />
+                        <Setter Target="ValueControl.FontSize" Value="14" />
+                        <Setter Target="ButtonControl.FontSize" Value="14" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <!-- VisualState to be triggered when window
+                                 width is < 720 effective pixels. -->
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="PanelControl.Margin" Value="1" />
+                        <Setter Target="CaptionControl.Width" Value="100" />
+                        <Setter Target="LabelControl.Width" Value="50" />
+                        <Setter Target="ValueControl.Width" Value="50" />
+                        <Setter Target="ButtonControl.Width" Value="60" />
+                        <Setter Target="CaptionControl.FontSize" Value="10" />
+                        <Setter Target="LabelControl.FontSize" Value="10" />
+                        <Setter Target="ValueControl.FontSize" Value="10" />
+                        <Setter Target="ButtonControl.FontSize" Value="10" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+
+</UserControl>

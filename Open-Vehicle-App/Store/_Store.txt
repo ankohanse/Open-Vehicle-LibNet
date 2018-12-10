@@ -1,0 +1,91 @@
+﻿Product Name:
+Open Vehicle Monitoring System
+
+
+---
+Description:
+Brought to you by the open-source OVMS project, finally you can remotely monitor your edge cutting EVs. The app shows the current state of charge (SOC), door/trunk/hood status, tire pressures and temperatures (TPMS), core system temperatures (PEM, motor, and ESS/battery), and displays your car's live GPS location on the map.
+
+While OVMS hardware is required to remotely monitor your Tesla Roadster (or other supported vehicles), you can try this app and see what it does via the included DEMO car account.
+
+As this is an open-source project, you can either buy the factory assembled official OVMS car module, or, build yourself one with off the shelf components. Find out more about the OVMS car module (USD99) on our project website: http://www.openvehicles.com/
+
+Open Vehicle Monitoring System
+
+Why?
+We are a group of enthusiasts who want an interface to be able to talk to our cars remotely, perhaps add on-car displays (such as heads-up speed), and we want to have fun doing it.
+
+What is it?
+The Open Vehicle Monitoring System is three things:
+1. A low-cost open-source module that fits in the car (available on the OVMS site). It is powered by the car, talks to the car on the CAN bus, and uses the GSM cellular network to talk to its user.
+2. A server (provided by the OVMS project). The car module can be configured to either talk to the server (via UDP/IP or TCP/IP over the Internet) or the user directly (via SMS).
+3. A cellphone App (this app). This talks to the server (via TCP/IP HTTP protocol) to retrieve messages from the car and issue instructions.
+
+* Renault Twizy, Chevy Volt, Vauxhall Ampera, and Tesla Roadster are trademarks of their respective companies, and in no way affiliated with this App.
+
+
+---
+What's new in this version:
+Detailed change log: https://github.com/ankohanse/Open-Vehicle-Windows
+
+Note that in the near future this will be moved over to 
+https://github.com/openvehicles/Open-Vehicle-Windows
+
+v 1.0.0.0:
+Initial version
+
+
+---
+Product Features:
+-
+
+
+---
+Screenshots:
+- desktop *.png
+- mobile *.png
+
+
+---
+Store Logos:
+- Store Logo <size>.png
+
+
+---
+Trailers:
+-
+
+
+---
+Supplemental fields
+- Short title:   OVMS
+- Sort Title:    Open Vehicle Monitoring System
+- Voice Title:   Open Vehicle Monitoring System
+- Short Descr:   -
+
+Additional system requirements:
+-
+
+---
+Additional information:
+Search terms:
+	- Open Vehicle
+	- OVMS
+	- EV
+	- Electric
+
+
+Copyright & Trademark
+Open Vehicles Ltd
+
+Additional License terms:
+-
+
+Developed by:
+Open Vehicles Ltd
+
+
+---
+Subission information:
+On first use the application will automatically use a demo account.
+This demo account can be removed by the user once he defines at least one additional car definition via Settings.

@@ -35,7 +35,7 @@ namespace OpenVehicle.LibNet.Entities
 {
     // Note: we use Fody to inject INotifyPropertyChanged code into all property setters
     //
-    public class Preferences : INotifyPropertyChanged
+    public class OVMSPreferences : INotifyPropertyChanged
     {
 
         #region constants
@@ -63,14 +63,14 @@ namespace OpenVehicle.LibNet.Entities
 
         #region singleton
 
-        private Preferences()
+        protected OVMSPreferences()
         {
             UnitUseSpace       = true;
             UnitForTemperature = UnitTemperature.Fahrenheit;
         }
 
 
-        public static Preferences Instance
+        public static OVMSPreferences Instance
         {
             get { return Nested.instance; }
         }
@@ -84,7 +84,7 @@ namespace OpenVehicle.LibNet.Entities
             {
             }
 
-            internal static readonly Preferences instance = new Preferences();
+            internal static readonly OVMSPreferences instance = new OVMSPreferences();
         }
 
         #endregion singleton

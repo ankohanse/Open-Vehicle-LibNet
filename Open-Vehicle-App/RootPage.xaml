@@ -1,0 +1,229 @@
+﻿<Page
+    x:Class="OpenVehicle.App.RootPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenVehicle.App"
+    xmlns:entities="using:OpenVehicle.App.Entities"
+    xmlns:libnet="using:OpenVehicle.LibNet.Entities"
+    xmlns:controls="using:OneCode.Windows.UWP.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Windows10version1803="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 6)"
+    xmlns:Windows10FallCreatorsUpdate="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 5)"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock 
+                x:Name="AppTitle"
+                Grid.Column="1" 
+                xmlns:appmodel="using:Windows.ApplicationModel"
+                Text=""
+                Style="{StaticResource CaptionTextBlockStyle}"
+                IsHitTestVisible="False"
+                Canvas.ZIndex="1" 
+                />
+       
+        
+        <controls:NavigationView
+            Canvas.ZIndex="0"
+            x:Name="rootNav"
+            Grid.Column="1"
+            AlwaysShowHeader="True"
+            IsSettingsVisible="True"
+            IsTabStop="False"
+            ItemInvoked="OnNavItemInvoked"
+            >
+            <!--
+            Windows10version1803:IsBackButtonVisible="Collapsed"
+            Windows10version1803:BackRequested="OnBackRequested"
+            -->
+
+            <controls:NavigationView.HeaderTemplate>
+                <DataTemplate x:DataType="local:RootViewModel"> 
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            x:Name="pageTitle"
+                            Grid.Column="0"
+                            Text="{x:Bind PageTitle, Mode=OneWay}"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            VerticalAlignment="Center"
+                            Margin="20,0,0,0"
+                            />
+
+                        <Image
+                            Grid.Column="2"
+                            Source="{x:Bind GetConnectionImage(CarData.server_lastupdated, CarData.server_paranoid), Mode=OneWay}" 
+                            Stretch="Uniform" 
+                            Width="20"
+                            Height="20"
+                            Margin="0,0,10,0"
+                            />
+
+                        <TextBlock
+                            Grid.Column="3"
+                            Text="{x:Bind GetConnectionText(CarData.server_lastupdated), Mode=OneWay}"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            VerticalAlignment="Center"
+                            />
+
+                        <Image 
+                            Grid.Column="4"
+                            Source="{x:Bind GetGsmBarsImage(CarData.gsm_bars), Mode=OneWay}" 
+                            Stretch="Uniform" 
+                            Width="35" 
+                            Height="30"
+                            Margin="5,0,10,0"
+                            />
+                    </Grid>
+                </DataTemplate>
+            </controls:NavigationView.HeaderTemplate>
+
+            <controls:NavigationView.MenuItems>
+                <controls:NavigationViewItem Content="Battery" Tag="BatteryPage" >
+                    <!-- or Icon="TwoBars" -->
+                    <controls:NavigationViewItem.Icon>
+                        <!-- Segoe MDL2 - Battery8: E858   or VerticalBattery8: F5Fa -->
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF5Fa;" /> 
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Charge" Tag="ChargePage" >
+                    <controls:NavigationViewItem.Icon>
+                        <!-- Segoe MDL2 - BatteryCharging5: E85F   or LightningBolt: E945  or Leaf: E8BE  or  VerticalBatteryCharging5: F602 -->
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE945;" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Temperature" Tag="ClimatePage" >
+                    <controls:NavigationViewItem.Icon>
+                        <!-- Segoe MDL2 - Car: E804  or  ParkingLocationMirrored: EA5E or  Frigid: E9CA -->
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE9CA;" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Icon="Permissions" Content="Doors" Tag="DoorsPage" />
+                <controls:NavigationViewItem Icon="Target" Content="Tyres" Tag="TyresPage" />
+                <controls:NavigationViewItem Icon="Map" Content="Location" Tag="LocationPage" />     <!-- or Icon="World" or "Flag" -->
+                <controls:NavigationViewItem Icon="Tag" Content="Info" Tag="InfoPage" />             <!-- or Icon="Attach"  or  Info: E946 -->
+
+                <controls:NavigationViewItemSeparator />
+
+                <controls:NavigationViewItem 
+                    Content="HomeLink" Tag="Flyout" Tapped="OnHomeLinkMenu"
+                    Visibility="{x:Bind HomeLinkVisible, Mode=OneWay}"
+                    >
+
+                    <controls:NavigationViewItem.Icon>
+                        <BitmapIcon x:Name="HomeLinkIcon" UriSource="ms-appx:///Assets/Misc/homelinklogo.png"  />
+                    </controls:NavigationViewItem.Icon>
+                    <controls:NavigationViewItem.Resources>
+                        <MenuFlyout x:Name="HomeLinkFlyout" x:Key="HomeLinkFlyout">
+                            <MenuFlyoutItem Text="Default" Click="OnHomeLinkDefault" />
+                            <MenuFlyoutItem Text="0" Click="OnHomeLink0" />
+                            <MenuFlyoutItem Text="1" Click="OnHomeLink1" />
+                            <MenuFlyoutItem Text="2" Click="OnHomeLink2" />
+                        </MenuFlyout>
+                    </controls:NavigationViewItem.Resources>
+                </controls:NavigationViewItem>
+            </controls:NavigationView.MenuItems>
+
+            <controls:NavigationView.PaneFooter>
+                <controls:NavigationViewItem
+                    Visibility="{x:Bind ViewModel.AppSettings.CarSettingsListContainsMultiple, Mode=OneWay}" >
+
+                    <ComboBox 
+                        x:Name="selCar"
+                        ItemsSource="{x:Bind ViewModel.AppSettings.CarSettingsList, Mode=OneWay}"
+                        SelectedIndex="{x:Bind ViewModel.AppSettings.CarSettingsSelIndex, Mode=TwoWay}"
+                        SelectionChanged="OnCarSelectedChanged"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Margin="-25,0,0,0">
+
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="entities:AppCarSettings">
+                                <Grid 
+                                    Background="Transparent">
+                                    
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <Image 
+                                        Grid.Column="0" 
+                                        Source="{Binding Path=vehicle_image_resourcename, Converter={StaticResource manifestResourceNameToImageSourceConverter}}" 
+                                        Stretch="Uniform" 
+                                        Width="40" Height="25"
+                                        Margin="0,0,10,0"/>
+                                    <TextBlock 
+                                        Grid.Column="1" 
+                                        Text="{Binding Path=vehicle_displayname}" 
+                                        HorizontalAlignment="Stretch"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </controls:NavigationViewItem> 
+            </controls:NavigationView.PaneFooter>
+
+            <Frame x:Name="rootFrame" />
+
+        </controls:NavigationView>
+
+
+
+
+        <TextBlock
+            x:Name="FLyoutAnchor"
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            >
+
+            <FlyoutBase.AttachedFlyout>
+                <Flyout>
+
+                    <StackPanel
+                        Orientation="Vertical"
+                        CornerRadius="10"
+                        >
+
+                        <TextBlock 
+                            x:Name="FlyoutTitle"
+                            Text="" 
+                            TextAlignment="Center" 
+                            FontWeight="Bold"
+                            Margin="20,0,20,5" 
+                            />
+
+                        <TextBlock 
+                            x:Name="FlyoutMessage"
+                            Text="" 
+                            TextWrapping="Wrap" 
+                            VerticalAlignment="Center" 
+                            TextAlignment="Center" 
+                            Margin="20" 
+                            />
+
+                    </StackPanel>
+
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
+        </TextBlock>
+
+    </Grid>
+
+</Page>

@@ -1,0 +1,181 @@
+﻿<Page
+    x:Class="OpenVehicle.App.DoorsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenVehicle.App"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Windows10FallCreatorsUpdate="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 5)"
+    xmlns:UserControl="using:OpenVehicle.App.UserControl"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid 
+        Margin="20" 
+        Windows10FallCreatorsUpdate:RowSpacing="20"
+        Windows10FallCreatorsUpdate:ColumnSpacing="20"
+        >
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock 
+            Grid.Row="0"
+            Grid.Column="0"
+            Text="Vehicle:"
+            VerticalAlignment="Center"
+            />
+        <TextBlock 
+            Grid.Row="0"
+            Grid.Column="1" 
+            Text="{x:Bind LockedStatusText, Mode=OneWay}" 
+            VerticalAlignment="Center"
+            />
+        <Button
+            Grid.Row="0"
+            Grid.Column="2" 
+            Content="{x:Bind LockedButtonText, Mode=OneWay}"
+            Visibility="{x:Bind LockedButtonVisible, Mode=OneWay}"
+            VerticalAlignment="Center"
+            Width="70"
+            Click="OnLockUnlock"
+            />
+
+        <TextBlock                 
+            Grid.Row="1"
+            Grid.Column="0"
+            Text="Valet mode:"
+            VerticalAlignment="Center"
+            />
+        <TextBlock 
+            Grid.Row="1"
+            Grid.Column="1" 
+            Text="{x:Bind ValetModeStatusText, Mode=OneWay}" 
+            VerticalAlignment="Center"
+            />
+        <Button 
+            Grid.Row="1"
+            Grid.Column="2" 
+            Content="{x:Bind ValetModeButtonText, Mode=OneWay}" 
+            Visibility="{x:Bind ValetModeButtonVisible, Mode=OneWay}" 
+            VerticalAlignment="Center"
+            Width="70"
+            Click="OnValetModeEnable"
+            />
+
+        <Image
+            Grid.Row="3" Grid.RowSpan="5"
+            Grid.Column="1"
+            Source="{x:Bind CarSettings.vehicle_outline_resourcename, Converter={StaticResource manifestResourceNameToImageSourceConverter}, Mode=OneWay}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch" 
+            Stretch="Uniform" 
+            Margin="0,20,0,0"
+            />
+
+        <Image
+            Grid.Row="3" Grid.RowSpan="5"
+            Grid.Column="1"
+            Source="{x:Bind LockedImage, Mode=OneWay}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch" 
+            Stretch="Uniform" 
+            Margin="0,20,0,0"
+            />
+
+        <Image 
+            Grid.Row="3" Grid.RowSpan="5"
+            Grid.Column="1"
+            Source="{x:Bind ValetModeImage, Mode=OneWay}"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch" 
+            Stretch="Uniform" 
+            Margin="0,20,0,0"
+            />
+        
+        <StackPanel 
+            Grid.Row="2"
+            Grid.Column="1"
+            Orientation="Vertical"
+            >
+
+            <UserControl:DoorsPageItem
+                Visibility="{x:Bind CarData.door_chargeport_open, Mode=OneWay}"  
+                Orientation="horizontal"
+                LabelText="Charge port:"
+                ValueText="open"
+                />
+
+            <UserControl:DoorsPageItem
+                Visibility="{x:Bind CarData.door_bonnet_open, Mode=OneWay}" 
+                Orientation="horizontal"
+                LabelText="Bonnet:"
+                ValueText="open"
+                />
+        </StackPanel>
+
+        <UserControl:DoorsPageItem
+            Grid.Row="4"
+            Grid.Column="0"
+            Visibility="{x:Bind CarData.door_frontleft_open, Mode=OneWay}" 
+            Orientation="Vertical"
+            LabelText="Front-left:"
+            ValueText="open"
+            />
+
+        <UserControl:DoorsPageItem
+            Grid.Row="4"
+            Grid.Column="2"
+            Visibility="{x:Bind CarData.door_frontright_open, Mode=OneWay}" 
+            Orientation="Vertical"
+            LabelText="Front-right:" 
+            ValueText="open"
+            />
+
+
+        <UserControl:DoorsPageItem
+            Grid.Row="6"
+            Grid.Column="0"
+            Visibility="{x:Bind CarData.door_rearleft_open, Mode=OneWay}" 
+            Orientation="Vertical"
+            LabelText="Rear-left:"
+            ValueText="open"
+            />
+
+        <UserControl:DoorsPageItem
+            Grid.Row="6"
+            Grid.Column="2"
+            Visibility="{x:Bind CarData.door_rearright_open, Mode=OneWay}" 
+            Orientation="Vertical"
+            LabelText="Rear-right:"
+            ValueText="open"
+            />
+
+        <UserControl:DoorsPageItem
+            Grid.Row="8"
+            Grid.Column="1"
+            Visibility="{x:Bind CarData.door_trunk_open, Mode=OneWay}" 
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            LabelText="Trunk:"
+            ValueText="open"
+            />
+
+    </Grid>
+</Page>

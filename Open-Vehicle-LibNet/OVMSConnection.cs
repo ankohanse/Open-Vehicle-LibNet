@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Security.Cryptography;
@@ -41,14 +42,14 @@ namespace OpenVehicle.LibNet
 {
     public class OVMSConnection : IDisposable
     {
-        #region constants
+#region constants
 
         private const int OVMS_TOKEN_SIZE    = 22;
 
-        #endregion constants
+#endregion constants
 
 
-        #region IDisposable Support
+#region IDisposable Support
 
         private bool disposedValue = false; // To detect redundant calls
 
@@ -83,10 +84,10 @@ namespace OpenVehicle.LibNet
             // GC.SuppressFinalize(this);
         }
 
-        #endregion IDisposable Support
+#endregion IDisposable Support
 
         
-        #region properties
+#region properties
 
         public bool Connected
         {
@@ -97,17 +98,20 @@ namespace OpenVehicle.LibNet
 
 
         #region members
-
-
+#if OPENVEHICLE_LIBNET_LOG
         // For logging from the library
-        // Compatible with NLog, Log4Net, SeriLog, Loupe in calling application
-        private static readonly ILog logger = LogProvider.For<OVMSConnection>();
+        // LibLog is compatible with NLog, Log4Net, SeriLog, Loupe in calling application
+        private static readonly ILog logger     = LogProvider.For<OVMSConnection>();
+#else 
+        private static readonly ILog logger     = null;
+#endif
 
         // Our communication settings
         private CarSettings     m_carSettings   = null;
 
         // Socket communications
-        private Socket          m_socket        = null;
+        //private Socket          m_socket        = null;
+        private TcpClient       m_socket        = null;
         private NetworkStream   m_socketStream  = null;
         private StreamReader    m_socketReader  = null;
         private BinaryWriter    m_socketWriter  = null;
@@ -149,15 +153,14 @@ namespace OpenVehicle.LibNet
             m_rxCrypt = null;
             m_txCrypt = null;
 
-            // Connect to the OVMS server
-            m_socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            
-            await m_socket.ConnectAsync(m_carSettings.ovmsServer, m_carSettings.ovmsPort);
+            m_socket = new TcpClient(AddressFamily.InterNetworkV6);
+            m_socket.Client.DualMode = true;
+            await m_socket.ConnectAsync(m_carSettings.ovms_server, m_carSettings.ovms_port);
             
             if (!m_socket.Connected)
                 return null;
 
-            m_socketStream = new NetworkStream(m_socket, true);
+            m_socketStream = m_socket.GetStream();
             m_socketReader = new StreamReader(m_socketStream, Encoding.UTF8);
             m_socketWriter = new BinaryWriter(m_socketStream, Encoding.UTF8, true);
 
@@ -172,7 +175,7 @@ namespace OpenVehicle.LibNet
             }
 
             byte[] clientTokenData  = Encoding.UTF8.GetBytes(clientTokenStr);
-            byte[] key              = Encoding.UTF8.GetBytes(m_carSettings.selServerPwd);
+            byte[] key              = Encoding.UTF8.GetBytes(m_carSettings.server_pwd);
             HMACMD5 hmac            = new HMACMD5(key);
             hmac.Initialize();
 
@@ -180,8 +183,7 @@ namespace OpenVehicle.LibNet
             string  clientDigestStr  = Convert.ToBase64String(clientDigestData);
 
             // Send the welcome string
-            string  welcome = string.Format("MP-A 0 {0} {1} {2}", clientTokenStr, clientDigestStr, m_carSettings.selVehicleId);
-            await TransmitLineAsync(welcome);
+            await TransmitLineAsync( $"MP-A 0 {clientTokenStr} {clientDigestStr} {m_carSettings.vehicle_id}" );
 
             // Receive the welcome response
             string  response = await ReceiveLineAsync();
@@ -254,26 +256,38 @@ namespace OpenVehicle.LibNet
         private void _Disconnect()
         {
             if (m_socketReader != null)
+            {
                 m_socketReader.Dispose();
-
+                m_socketReader = null;
+            }
             if (m_socketWriter != null)
+            {
                 m_socketWriter.Dispose();
-
+                m_socketWriter = null;
+            }
             if (m_socketStream != null)
+            {
                 m_socketStream.Dispose();
-
+                m_socketStream = null;
+            }
             if (m_socket != null)
+            {
                 m_socket.Dispose();
+                m_socket = null;
+            }
         }
 
-        #endregion Connect / Disconnect
+#endregion Connect / Disconnect
 
         
-        #region Transmit / Receive on line-by-line level
+#region Transmit / Receive on line-by-line level
         
         public async Task TransmitLineAsync(string msg)
         {
             logger.TraceFormat("TX: {0}", msg);
+
+            if (m_socketWriter == null)
+                return;
 
             if (m_txCrypt != null)
             {
@@ -295,6 +309,9 @@ namespace OpenVehicle.LibNet
 
         public async Task<string> ReceiveLineAsync()
         {
+            if (m_socketReader == null)
+                return null;
+
             string msg = await m_socketReader.ReadLineAsync();
             if (msg == null)
                 return null;
@@ -306,13 +323,13 @@ namespace OpenVehicle.LibNet
 
                 msg = Encoding.UTF8.GetString(buf);
             }
-            logger.TraceFormat("RX: {0}", msg);
 
+            logger.TraceFormat("RX: {0}", msg);
             return msg;
         }
 
 
-        #endregion Send / Receive on line by line level
+#endregion Send / Receive on line by line level
 
     }
 }

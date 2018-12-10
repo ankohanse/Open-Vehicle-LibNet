@@ -1,0 +1,162 @@
+﻿<Page
+    x:Class="OpenVehicle.App.ClimatePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenVehicle.App"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:common="using:Windows.UI.Composition"
+    xmlns:usercontrol="using:OpenVehicle.App.UserControl"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    
+    <!-- TODO: better images (less flat) -->
+
+    <!-- TODO: info about climate timers -->
+    
+<!--    <ScrollViewer VerticalScrollBarVisibility="Auto"> -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel 
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                x:Name="pnlComponents"
+                Orientation="Vertical"
+                VerticalAlignment="Center"
+                Margin="20"
+                >
+
+                <usercontrol:ClimatePageItem IsCaption="True" LabelText="Components" />
+                <usercontrol:ClimatePageItem LabelText="Charger" ValueText="{x:Bind CarData.temp_charger, Mode=OneWay}" />
+                <usercontrol:ClimatePageItem LabelText="Battery" ValueText="{x:Bind CarData.temp_battery, Mode=OneWay}" />
+                <usercontrol:ClimatePageItem LabelText="Inverter" ValueText="{x:Bind CarData.temp_pem, Mode=OneWay}" />
+                <usercontrol:ClimatePageItem LabelText="Motor" ValueText="{x:Bind CarData.temp_motor, Mode=OneWay}" />
+            </StackPanel>
+
+
+            <Image
+                Grid.Row="0"
+                Grid.Column="2"
+                x:Name="GaugeImage"
+                Source="ms-appx:///Assets/Misc/temperature_gauge.png"
+                Stretch="Uniform"
+                Width="200"
+                Height="200"
+                Margin="40"
+                />
+
+            <Image
+                Grid.Row="1"
+                Grid.Column="0"
+                x:Name="SunImage"
+                Source="ms-appx:///Assets/Misc/climate_sun.png"
+                Stretch="Uniform"
+                Width="100"
+                Height="100"
+                Margin="-30,0,10,20"
+                />
+
+            <Image
+                Grid.Row="1"
+                Grid.Column="0"            
+                x:Name="SnowImage"
+                Source="ms-appx:///Assets/Misc/climate_snow.png"
+                Stretch="Uniform"
+                Width="100"
+                Height="100"
+                Margin="-40,50,10,10"
+                />
+
+            <Image
+                Grid.Row="1"
+                Grid.Column="0"
+                x:Name="ThermoImage"
+                Source="ms-appx:///Assets/Misc/climate_thermometer3.png"
+                Stretch="Uniform"
+                Width="100"
+                Height="100"
+                Margin="50,20,10,10"
+                />
+
+            <StackPanel 
+                Grid.Row="1"
+                Grid.Column="2"            
+                Grid.ColumnSpan="2"
+                x:Name="pnlCabin"
+                Orientation="Vertical"
+                VerticalAlignment="Center"
+                Margin="20"
+                >
+
+                <usercontrol:ClimatePageItem IsCaption="True" LabelText="Climate" />
+                <usercontrol:ClimatePageItem LabelText="Ambient" ValueText="{x:Bind CarData.temp_ambient, Mode=OneWay}" />
+                <usercontrol:ClimatePageItem LabelText="Cabin" ValueText="{x:Bind CarData.temp_cabin, Mode=OneWay}" />
+                
+                <usercontrol:ClimatePageItem LabelText="Aircon" ValueText="{x:Bind AirconStatusText, Mode=OneWay}" ButtonText="{x:Bind AirconButtonText, Mode=OneWay}" ButtonClick="OnClimateControl" Margin="0,20,0,0" />
+            </StackPanel>
+
+
+
+
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <!-- VisualState to be triggered when window
+                                 width is >=720 effective pixels. -->
+                            <AdaptiveTrigger MinWindowWidth="720" />
+                        </VisualState.StateTriggers>
+
+                        <VisualState.Setters>
+                            <Setter Target="GaugeImage.Width" Value="200" />
+                            <Setter Target="GaugeImage.Height" Value="200" />
+                            <Setter Target="SunImage.Width" Value="100" />
+                            <Setter Target="SunImage.Height" Value="100" />
+                            <Setter Target="SunImage.Margin" Value="-30,0,10,20" />
+                            <Setter Target="SnowImage.Width" Value="100" />
+                            <Setter Target="SnowImage.Height" Value="100" />
+                            <Setter Target="SnowImage.Margin" Value="-40,50,10,10" />
+                            <Setter Target="ThermoImage.Width" Value="100" />
+                            <Setter Target="ThermoImage.Height" Value="100" />
+                            <Setter Target="ThermoImage.Margin" Value="50,20,10,10" />
+                        </VisualState.Setters>
+                    </VisualState>
+
+                    <VisualState>
+                        <VisualState.StateTriggers>
+                            <!-- VisualState to be triggered when window
+                                 width is < 720 effective pixels. -->
+                            <AdaptiveTrigger MinWindowWidth="0" />
+                        </VisualState.StateTriggers>
+
+                        <VisualState.Setters>
+                            <Setter Target="GaugeImage.Width" Value="120" />
+                            <Setter Target="GaugeImage.Height" Value="120" />
+                            <Setter Target="SunImage.Width" Value="50" />
+                            <Setter Target="SunImage.Height" Value="50" />
+                            <Setter Target="SunImage.Margin" Value="-15,0,5,10" />
+                            <Setter Target="SnowImage.Width" Value="50" />
+                            <Setter Target="SnowImage.Height" Value="50" />
+                            <Setter Target="SnowImage.Margin" Value="-20,25,5,5" />
+                            <Setter Target="ThermoImage.Width" Value="50" />
+                            <Setter Target="ThermoImage.Height" Value="50" />
+                            <Setter Target="ThermoImage.Margin" Value="25,10,5,5" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
+<!--    </ScrollViewer>  -->
+</Page>

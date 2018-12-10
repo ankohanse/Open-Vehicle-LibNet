@@ -85,12 +85,12 @@ namespace OpenVehicle.Demo
 
             CarSettings settings = new CarSettings()
             {
-                ovmsServer          = ovmsServer,
-                ovmsPort            = int.Parse(ovmsPort),
+                ovms_server         = ovmsServer,
+                ovms_port           = int.Parse(ovmsPort),
             
-                selVehicleId        = selVehicleId,
-                selVehicleLabel     = selVehicleLabel,
-                selServerPwd        = selServerPwd,
+                vehicle_id          = selVehicleId,
+                vehicle_label       = selVehicleLabel,
+                server_pwd          = selServerPwd,
             };
 
             await OVMSService.Instance.StartAsync(settings);
@@ -122,10 +122,22 @@ namespace OpenVehicle.Demo
                     // Trace
                     logger.Debug("Command: {0}", str);
 
-                    // Send the command message to OVMS server
-                    OVMSMessage msg = new OVMSMessage('C', new string[] { "7," + str } );
-
-                    await OVMSService.Instance.TransmitMessageAsync(msg);
+                    // Send the command to the OVMS server
+                    if (str.StartsWith("*"))
+                    {
+                        // MMI/USSD command
+                        await OVMSService.Instance.TransmitCommandAsync( OVMSService.Command.MMI_USSD, str);
+                    }
+                    else if (str.StartsWith("@"))
+                    {
+                        // Modem command
+                        await OVMSService.Instance.TransmitCommandAsync( OVMSService.Command.Modem, str.Substring(1) );
+                    }
+                    else
+                    {
+                        // SMS command
+                        await OVMSService.Instance.TransmitCommandAsync( OVMSService.Command.Shell, str);
+                    }
                 }
             }
 
@@ -155,9 +167,31 @@ namespace OpenVehicle.Demo
 
                 if (values.Length > 2 && values[0] == "7")
                 {
-                    string [] lines = values[2].Split(new char[] { '\r' } );
+                    string   resCode  = values[1];
+                    string[] resLines = values[2].Split(new char[] { '\r' } );
 
-                    foreach (string line in lines)
+                    switch (resCode)
+                    {
+                        case "0":   // ok
+                            break;
+
+                        case "1":   // failed
+                            Console.WriteLine("Failed");
+                            break;
+
+                        case "2":   // unsupported
+                            Console.WriteLine("Not supported");
+                            break;
+
+                        case "3":   // unimplemented
+                            Console.WriteLine("Not implemented");
+                            break;
+
+                        default:    // error
+                            Console.WriteLine("Error");
+                            break;
+                    }
+                    foreach (string line in resLines)
                     {
                         // Show response on screen
                         Console.WriteLine(line);

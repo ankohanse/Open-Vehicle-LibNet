@@ -1,0 +1,59 @@
+﻿<ContentDialog
+    x:Class="OpenVehicle.App.SettingsForVehicleDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenVehicle.App"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Windows10FallCreatorsUpdate="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 5)"
+    mc:Ignorable="d" >
+
+    <ScrollViewer VerticalScrollMode="Auto">
+        <VariableSizedWrapGrid 
+            Orientation="Horizontal" 
+            ItemWidth="200"
+            >
+
+            <StackPanel 
+                Orientation="Vertical" 
+                Margin="10,0,10,0"
+                >
+
+                <TextBox x:Name="txtVehicleID" Header="Vehicle ID" Text="{x:Bind m_CarSettings.vehicle_id, Mode=TwoWay}" Windows10FallCreatorsUpdate:CharacterCasing="Upper" Margin="0,15,0,0" />
+                <TextBox x:Name="txtVehicleLabel" Header="Vehicle Label (arbitrary)" Text="{x:Bind m_CarSettings.vehicle_label, Mode=TwoWay}" Margin="0,15,0,0" />
+                <PasswordBox x:Name="txtServerPwd" Header="Vehicle Server Password" Password="{x:Bind m_CarSettings.server_pwd, Mode=TwoWay}" Margin="0,15,0,0" />
+                <PasswordBox x:Name="txtModulePwd" Header="Module/SMS Password" Password="{x:Bind m_CarSettings.module_pwd, Mode=TwoWay}" Margin="0,15,0,0" />
+                <TextBox x:Name="txtOvmsServer" Header="OVMS Server Url" Text="{x:Bind m_CarSettings.ovms_server, Mode=TwoWay}" Margin="0,15,0,0" />
+                <TextBox x:Name="txtOvmsPort" Header="OVMS Server Port" InputScope="Digits" Text="{x:Bind m_CarSettings.ovms_port, Mode=TwoWay}" Visibility="Collapsed" Margin="0,15,0,0" />
+            </StackPanel>
+
+            <StackPanel 
+                Orientation="Vertical" 
+                Margin="10,0,10,0"
+                >
+                
+                <ComboBox 
+                    Header="Vehicle Image" 
+                    ItemsSource="{x:Bind m_CarImages}" 
+                    SelectedValuePath="Key"
+                    SelectedValue="{x:Bind m_CarSettings.vehicle_image, Mode=TwoWay}"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,15,0,0"
+                    >
+
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <Image 
+                                Source="{Binding Path=Value, Converter={StaticResource manifestResourceNameToImageSourceConverter}}" 
+                                Tag="{Binding Path=Key}" 
+                                Width="130" 
+                                Height="130" 
+                                />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+
+        </VariableSizedWrapGrid>
+    </ScrollViewer>
+</ContentDialog>

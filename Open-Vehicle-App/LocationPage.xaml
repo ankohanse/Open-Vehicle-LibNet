@@ -1,0 +1,95 @@
+﻿<Page
+    x:Class="OpenVehicle.App.LocationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenVehicle.App"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
+    xmlns:usercontrol="using:OpenVehicle.App.UserControl"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>       
+
+        <maps:MapControl x:Name="mapControl" Grid.ColumnSpan="2" Grid.RowSpan="2"
+            TiltInteractionMode="Disabled"
+            RotateInteractionMode="Disabled"
+            ZoomInteractionMode="GestureAndControl"
+            ZoomLevel="12"
+            Style="Road"
+            Center="{x:Bind CarData.pos_geopoint, Mode=OneWay}"
+            Heading="0"
+            DesiredPitch="0"
+            LandmarksVisible="True"
+            MapServiceToken="9YYc51wb9Vu5IPVoEVAM~0D09X1F4Gl5s9KmiKy8kcQ~Au8Oi5aSlwTPMIwtqJ-tK6ZoO6U5LjN4xNqRHeO6P6q19qRAbjAa30XYQFR4NL2_">
+
+            <usercontrol:CarMapImage  
+                ImageSource="{x:Bind CarSettings.vehicle_mapimage_resourcename, Converter={StaticResource manifestResourceNameToImageSourceConverter}, Mode=OneWay}" 
+                Angle="{x:Bind CarData.pos_direction, Mode=OneWay}" 
+                Width="40"
+                Height="40"
+                maps:MapControl.NormalizedAnchorPoint="0.5,0.5"
+                maps:MapControl.Location="{x:Bind CarData.pos_geopoint, Mode=OneWay}" />
+
+        </maps:MapControl>
+
+
+        <StackPanel 
+            x:Name="InfoControl"
+            Grid.Row="1" 
+            Grid.Column="1" 
+            Orientation="Vertical" 
+            Margin="20"
+            Padding="5"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+
+            <usercontrol:LocationPageItem LabelText="Latitude:" ValueText="{x:Bind CarData.pos_latitude, Mode=OneWay}" />
+            <usercontrol:LocationPageItem LabelText="Longitude:" ValueText="{x:Bind CarData.pos_longitude, Mode=OneWay}" />
+            <usercontrol:LocationPageItem LabelText="Altitude:" ValueText="{x:Bind CarData.pos_altitude, Mode=OneWay}" />
+            <!-- Shown when driving -->
+            <usercontrol:LocationPageItem LabelText="Heading:" ValueText="{x:Bind HeadingFromDirection(CarData.pos_direction), Mode=OneWay}" Visibility="{x:Bind VisibleIfNotParked(CarData.env_parkedtime_raw), Mode=OneWay}" />
+            <usercontrol:LocationPageItem LabelText="Speed:" ValueText="{x:Bind CarData.pos_gpsspeed, Mode=OneWay}" Visibility="{x:Bind VisibleIfNotParked(CarData.env_parkedtime_raw), Mode=OneWay}" />
+            <!-- Shown when parked -->
+            <usercontrol:LocationPageItem LabelText="Parked:" ValueText="{x:Bind DurationFromSeconds(CarData.env_parkedtime_raw), Mode=OneWay}" Visibility="{x:Bind VisibleIfParked(CarData.env_parkedtime_raw), Mode=OneWay}"/>
+        </StackPanel>
+
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <!-- VisualState to be triggered when window
+                                     width is >=720 effective pixels. -->
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="InfoControl.Margin" Value="20" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <!-- VisualState to be triggered when window
+                                     width is < 720 effective pixels. -->
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="InfoControl.Margin" Value="10" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>

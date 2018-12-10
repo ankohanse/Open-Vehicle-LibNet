@@ -20,17 +20,17 @@
                         <TextBlock Text=""/>
 
                         <TextBlock x:Name="lblServer" Text="Server" />
-                        <TextBox x:Name="txtServer" Text="{x:Bind Path=CarSettings.ovmsServer, Mode=TwoWay}" Width="300" HorizontalAlignment="Left" />
+                        <TextBox x:Name="txtServer" Text="{x:Bind Path=CarSettings.ovms_server, Mode=TwoWay}" Width="300" HorizontalAlignment="Left" />
 
                         <TextBlock x:Name="lblPort" Text="Port" />
-                        <TextBox x:Name="txtPort" Text="{x:Bind Path=CarSettings.ovmsPort, Mode=TwoWay}" InputScope="Number" Width="100" HorizontalAlignment="Left" />
+                        <TextBox x:Name="txtPort" Text="{x:Bind Path=CarSettings.ovms_port, Mode=TwoWay}" InputScope="Number" Width="100" HorizontalAlignment="Left" />
 
                         <TextBlock Text=""/>
                         <TextBlock x:Name="lblSelVehicleId" Text="Vehicle ID" />
-                        <TextBox x:Name="txtSelVehicleId" Text="{x:Bind Path=CarSettings.selVehicleId, Mode=TwoWay}" Width="300" HorizontalAlignment="Left" />
+                        <TextBox x:Name="txtSelVehicleId" Text="{x:Bind Path=CarSettings.vehicle_id, Mode=TwoWay}" Width="300" HorizontalAlignment="Left" />
 
                         <TextBlock x:Name="lblSelServerPwd" Text="Vehicle Server Password" />
-                        <TextBox x:Name="txtSelServerPwd" Text="{x:Bind Path=CarSettings.selServerPwd, Mode=TwoWay}" Width="300" HorizontalAlignment="Left" />
+                        <TextBox x:Name="txtSelServerPwd" Text="{x:Bind Path=CarSettings.server_pwd, Mode=TwoWay}" Width="300" HorizontalAlignment="Left" />
 
                         <TextBlock Text=""/>
                         <StackPanel Orientation="Horizontal">
@@ -51,7 +51,7 @@
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Vehicle" Width="100"/>
-                            <TextBlock Text="{x:Bind CarSettings.selVehicleId, Mode=OneWay}" />
+                            <TextBlock Text="{x:Bind CarSettings.vehicle_id, Mode=OneWay}" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="VIN" Width="100"/>

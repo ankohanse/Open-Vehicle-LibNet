@@ -1,0 +1,606 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{CB83B19F-26BA-4B4B-BEFD-A60BFBD633C5}</ProjectGuid>
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenVehicle.App</RootNamespace>
+    <AssemblyName>Open-Vehicle-App</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17763.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.15063.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
+    <PackageCertificateKeyFile>Open-Vehicle-App_StoreKey.pfx</PackageCertificateKeyFile>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>97139AA20A514389E3D48AC1A7E29CF5AF4EB16C</PackageCertificateThumbprint>
+    <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
+    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Open-Vehicle-LibNet\Entities\CarData.cs">
+      <Link>LibNetLinks\CarData.cs</Link>
+    </Compile>
+    <Compile Include="..\Open-Vehicle-LibNet\Entities\CarSettings.cs">
+      <Link>LibNetLinks\CarSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\Open-Vehicle-LibNet\Entities\OVMSPreferences.cs">
+      <Link>LibNetLinks\OVMSPreferences.cs</Link>
+    </Compile>
+    <Compile Include="..\Open-Vehicle-LibNet\Helpers\CryptoRC4.cs">
+      <Link>LibNetLinks\CryptoRC4.cs</Link>
+    </Compile>
+    <Compile Include="..\Open-Vehicle-LibNet\OVMSConnection.cs">
+      <Link>LibNetLinks\OVMSConnection.cs</Link>
+    </Compile>
+    <Compile Include="..\Open-Vehicle-LibNet\OVMSMessage.cs">
+      <Link>LibNetLinks\OVMSMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Open-Vehicle-LibNet\OVMSService.cs">
+      <Link>LibNetLinks\OVMSService.cs</Link>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tasks\ReRegisterTask.cs" />
+    <Compile Include="Tasks\UpdateTileTask.cs" />
+    <Compile Include="ChargePage.xaml.cs">
+      <DependentUpon>ChargePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DoorsPage.xaml.cs">
+      <DependentUpon>DoorsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AskPinDialog.xaml.cs">
+      <DependentUpon>AskPinDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LibNetLinks\LogDummy.cs" />
+    <Compile Include="Tasks\UpdateTileViewModel.cs" />
+    <Compile Include="TyresPage.xaml.cs">
+      <DependentUpon>TyresPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\ExtensionsHelper.cs" />
+    <Compile Include="Entities\AppCarSettings.cs" />
+    <Compile Include="Entities\AppSettings.cs" />
+    <Compile Include="BatteryPage.xaml.cs">
+      <DependentUpon>BatteryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ClimatePage.xaml.cs">
+      <DependentUpon>ClimatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ManifestResourceNameToImageSourceConverter.cs" />
+    <Compile Include="Common\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
+    <Compile Include="InfoPage.xaml.cs">
+      <DependentUpon>InfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LocationPage.xaml.cs">
+      <DependentUpon>LocationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RootPage.xaml.cs">
+      <DependentUpon>RootPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RootViewModel.cs" />
+    <Compile Include="SettingsForVehicleDialog.xaml.cs">
+      <DependentUpon>SettingsForVehicleDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="HomeLinkPage.xaml.cs">
+      <DependentUpon>HomeLinkPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\CarMapImage.xaml.cs">
+      <DependentUpon>CarMapImage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\ClimatePageItem.xaml.cs">
+      <DependentUpon>ClimatePageItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\DoorsPageItem.xaml.cs">
+      <DependentUpon>DoorsPageItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\ChargePageItem.xaml.cs">
+      <DependentUpon>ChargePageItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\TyresPageItem.xaml.cs">
+      <DependentUpon>TyresPageItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\LocationPageItem.xaml.cs">
+      <DependentUpon>LocationPageItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\InfoPageItem.xaml.cs">
+      <DependentUpon>InfoPageItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\ProgressImage.xaml.cs">
+      <DependentUpon>ProgressImage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="NLog.config" />
+    <None Include="Open-Vehicle-App_StoreKey.pfx" />
+    <None Include="Open-Vehicle-App_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Store\_Store.txt" />
+    <EmbeddedResource Include="Assets\CarImages\car_ampera_black.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_ampera_crystalred.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_ampera_cybergray.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_ampera_lithiumwhite.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_ampera_powerblue.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_ampera_silvertopas.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_ampera_sovereignsilver.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_ampera_summitwhite.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_holdenvolt_black.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_holdenvolt_crystalclaret.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_holdenvolt_silvernitrate.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_holdenvolt_urbanfresh.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_holdenvolt_whitediamond.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_kiasoul_carribianblueclearwhite.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_kiasoul_cherryblackinfernored.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_kiasoul_clearwhite.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_kiasoul_pearlwhiteelectronicblue.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_kiasoul_titaniumsilver.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_arcticwhite.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_brilliantyellow.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_electricblue.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_fushionred.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_glacierblue.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_jetblack.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_lightninggreen.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_obsidianblack.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_racinggreen.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_radiantred.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_sterlingsilver.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_thundergray.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_twilightblue.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_roadster_veryorange.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_thinkcity_brightred.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_thinkcity_citrusyellow.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_thinkcity_classicblack.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_thinkcity_skyblue.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_twizy_diamondblackwithivygreen.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_twizy_snowwhiteandflameorange.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_twizy_snowwhiteandurbanblue.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_twizy_snowwhitewithblack.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_ampera_black.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_ampera_crystalred.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_ampera_cybergray.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_ampera_lithiumwhite.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_ampera_powerblue.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_ampera_silvertopas.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_ampera_sovereignsilver.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_ampera_summitwhite.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_holdenvolt_black.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_holdenvolt_crystalclaret.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_holdenvolt_silvernitrate.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_holdenvolt_urbanfresh.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_holdenvolt_whitediamond.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_kiasoul_carribianblueclearwhite.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_kiasoul_cherryblackinfernored.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_kiasoul_cherryblackredinferno.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_kiasoul_clearwhite kopi.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_kiasoul_clearwhite.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_kiasoul_pearlwhiteelectronicblue.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_kiasoul_titaniumsilver.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_arcticwhite.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_brilliantyellow.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_electricblue.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_fushionred.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_glacierblue.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_jetblack.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_lightninggreen.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_obsidianblack.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_racinggreen.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_radiantred.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_sterlingsilver.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_thundergray.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_twilightblue.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_roadster_veryorange.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_thinkcity_brightred.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_thinkcity_citrusyellow.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_thinkcity_classicblack.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_thinkcity_skyblue.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_twizy_diamondblackwithivygreen.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_twizy_snowwhiteandflameorange.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_twizy_snowwhiteandurbanblue.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_twizy_snowwhitewithblack.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_ampera_black.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_ampera_crystalred.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_ampera_cybergray.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_ampera_lithiumwhite.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_ampera_powerblue.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_ampera_silvertopas.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_ampera_sovereignsilver.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_ampera_summitwhite.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_holdenvolt_black.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_holdenvolt_crystalclaret.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_holdenvolt_silvernitrate.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_holdenvolt_urbanfresh.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_holdenvolt_whitediamond.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_kiasoul_carribianblueclearwhite.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_kiasoul_cherryblackinfernored.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_kiasoul_cherryblackredinferno.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_kiasoul_clearwhite.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_kiasoul_pearlwhiteelectronicblue.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_kiasoul_titaniumsilver.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_arcticwhite.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_brilliantyellow.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_electricblue.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_fushionred.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_glacierblue.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_jetblack.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_lightninggreen.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_obsidianblack.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_racinggreen.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_radiantred.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_sterlingsilver.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_thundergray.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_twilightblue.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_roadster_veryorange.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_thinkcity_brightred.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_thinkcity_citrusyellow.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_thinkcity_classicblack.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_thinkcity_skyblue.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_twizy_diamondblackwithivygreen.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_twizy_snowwhiteandflameorange.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_twizy_snowwhiteandurbanblue.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_twizy_snowwhitewithblack.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_env200_white.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_imiev_black.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_imiev_blue.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_imiev_cherrybrown.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_imiev_coolsilver.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_imiev_white.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_imiev_whitered.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_leaf_coulisred.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_leaf_deepblue.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_leaf_forgedbronze.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_leaf_gunmetallic.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_leaf_pearlwhite.png" />
+    <EmbeddedResource Include="Assets\CarImages\car_leaf_superblack.png" />
+    <EmbeddedResource Include="Assets\CarImages\car__default.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_env200_white.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_imiev.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_leaf_coulisred.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_leaf_deepblue.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_leaf_forgedbronze.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_leaf_gunmetallic.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_leaf_pearlwhite.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car_leaf_superblack.png" />
+    <EmbeddedResource Include="Assets\CarMapImages\map_car__default.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_env200_white.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_imiev.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_imiev_charge.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_imiev_charge_quick.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_leaf_coulisred.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_leaf_deepblue.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_leaf_forgedbronze.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_leaf_gunmetallic.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_leaf_pearlwhite.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_leaf_superblack.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car_twizy_chargeport.png" />
+    <EmbeddedResource Include="Assets\CarOutlines\ol_car__default.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-100.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-125.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-150.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-200.png" />
+    <Content Include="Assets\Logo\LargeTile.scale-400.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-100.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-125.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-150.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-200.png" />
+    <Content Include="Assets\Logo\SmallTile.scale-400.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-125.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-150.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Logo\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Logo\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Logo\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-125.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-150.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-200.png" />
+    <Content Include="Assets\Logo\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Logo\Wide310x150Logo.scale-400.png" />
+    <Content Include="Assets\Misc\193-location-arrow.png" />
+    <Content Include="Assets\Misc\20-gear2.png" />
+    <Content Include="Assets\Misc\49-battery.png" />
+    <Content Include="Assets\Misc\51-outlet.png" />
+    <Content Include="Assets\Misc\54-lock.png" />
+    <Content Include="Assets\Misc\54_sun.png" />
+    <Content Include="Assets\Misc\74-location.png" />
+    <Content Include="Assets\Misc\77-ekg.png" />
+    <Content Include="Assets\Misc\81-dashboard.png" />
+    <Content Include="Assets\Misc\battery_004.png" />
+    <Content Include="Assets\Misc\battery_008.png" />
+    <Content Include="Assets\Misc\battery_012.png" />
+    <Content Include="Assets\Misc\battery_016.png" />
+    <Content Include="Assets\Misc\battery_020.png" />
+    <Content Include="Assets\Misc\battery_024.png" />
+    <Content Include="Assets\Misc\battery_028.png" />
+    <Content Include="Assets\Misc\battery_032.png" />
+    <Content Include="Assets\Misc\battery_036.png" />
+    <Content Include="Assets\Misc\battery_040.png" />
+    <Content Include="Assets\Misc\battery_044.png" />
+    <Content Include="Assets\Misc\battery_048.png" />
+    <Content Include="Assets\Misc\battery_052.png" />
+    <Content Include="Assets\Misc\battery_056.png" />
+    <Content Include="Assets\Misc\battery_060.png" />
+    <Content Include="Assets\Misc\battery_064.png" />
+    <Content Include="Assets\Misc\battery_068.png" />
+    <Content Include="Assets\Misc\battery_072.png" />
+    <Content Include="Assets\Misc\battery_076.png" />
+    <Content Include="Assets\Misc\battery_080.png" />
+    <Content Include="Assets\Misc\battery_084.png" />
+    <Content Include="Assets\Misc\battery_088.png" />
+    <Content Include="Assets\Misc\battery_092.png" />
+    <Content Include="Assets\Misc\battery_096.png" />
+    <Content Include="Assets\Misc\battery_empty.png" />
+    <Content Include="Assets\Misc\battery_slider.png" />
+    <Content Include="Assets\Misc\climate_thermometer.png" />
+    <Content Include="Assets\Misc\battery_000.png" />
+    <Content Include="Assets\Misc\battery_100.png" />
+    <Content Include="Assets\Misc\battery_coppertops.png" />
+    <Content Include="Assets\Misc\battery_coppertops_widget.png" />
+    <Content Include="Assets\Misc\carlights.png" />
+    <Content Include="Assets\Misc\carlock.png" />
+    <Content Include="Assets\Misc\carunlock.png" />
+    <Content Include="Assets\Misc\carvaletoff.png" />
+    <Content Include="Assets\Misc\carvaleton.png" />
+    <Content Include="Assets\Misc\charger_bg.png" />
+    <Content Include="Assets\Misc\charger_bg_label.png" />
+    <Content Include="Assets\Misc\charger_button.png" />
+    <Content Include="Assets\Misc\charger_plug.png" />
+    <Content Include="Assets\Misc\climate_thermometer1.png" />
+    <Content Include="Assets\Misc\climate_thermometer2.png" />
+    <Content Include="Assets\Misc\climate_thermometer3.png" />
+    <Content Include="Assets\Misc\connection_bad.png" />
+    <Content Include="Assets\Misc\connection_bad_paranoid.png" />
+    <Content Include="Assets\Misc\connection_good.png" />
+    <Content Include="Assets\Misc\connection_good_paranoid.png" />
+    <Content Include="Assets\Misc\connection_unknown.png" />
+    <Content Include="Assets\Misc\connection_unknown_paranoid.png" />
+    <Content Include="Assets\Misc\homelinklogo.png" />
+    <Content Include="Assets\Misc\signal_strength_0.png" />
+    <Content Include="Assets\Misc\signal_strength_1.png" />
+    <Content Include="Assets\Misc\signal_strength_2.png" />
+    <Content Include="Assets\Misc\signal_strength_3.png" />
+    <Content Include="Assets\Misc\signal_strength_4.png" />
+    <Content Include="Assets\Misc\signal_strength_5.png" />
+    <Content Include="Assets\Misc\simplegreen_car_electricity.png" />
+    <Content Include="Assets\Misc\simplegreen_plug_electricity.png" />
+    <Content Include="Assets\Misc\simplegreen_sun.png" />
+    <Content Include="Assets\Misc\climate_snow.png" />
+    <Content Include="Assets\Misc\climate_sun.png" />
+    <Content Include="Assets\Misc\temperature_gauge.png" />
+    <Content Include="FodyWeavers.xml" />
+    <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Properties\Default.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="BatteryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ChargePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DoorsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AskPinDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TyresPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ClimatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LocationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RootPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SettingsForVehicleDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HomeLinkPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControl\CarMapImage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControl\ClimatePageItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControl\DoorsPageItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControl\ChargePageItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControl\TyresPageItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControl\LocationPageItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControl\InfoPageItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControl\ProgressImage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fody">
+      <Version>3.2.17</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.1.9</Version>
+    </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>4.5.10</Version>
+    </PackageReference>
+    <PackageReference Include="OneCode.Windows.UWP.Controls.NavigationView">
+      <Version>1.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="PropertyChanged.Fody">
+      <Version>2.5.13</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Thread">
+      <Version>4.3.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -26,8 +26,13 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using Windows.Devices.Geolocation;
 
 namespace OpenVehicle.LibNet.Entities
 {
@@ -64,8 +69,7 @@ namespace OpenVehicle.LibNet.Entities
         //
         // OVMS Server timestamp of last update (message "T")
         //
-        public long         server_lastupdated_raw              { get; private set; } = 0;
-        public DateTime     server_lastupdated                  => DateTime.Now.AddSeconds( -1 * server_lastupdated_raw );
+        public DateTime     server_lastupdated                  { get; private set; } = DateTime.Now;
 
         //
         // OVMS Server switched to paranoid mode communications
@@ -91,7 +95,8 @@ namespace OpenVehicle.LibNet.Entities
 
         public string       gsm_lock                            { get; private set; } = "";
         public int          gsm_signal                          { get; private set; } = 0;
-        public int          gsm_dbm                             => GetGsmDbm(gsm_signal);
+        public int          gsm_dbm_raw                         => GetGsmDbm(gsm_signal);
+        public string       gsm_dbm                             => $"{gsm_dbm_raw}{OVMSPreferences.Instance.UnitSpacer}dbm";
         public int          gsm_bars                            => GetGsmBars(gsm_signal);
 
         //
@@ -108,41 +113,46 @@ namespace OpenVehicle.LibNet.Entities
 
         public float        bat_cac                             { get; private set; } = 0.0f;
         public float        bat_soh_raw                         { get; private set; } = 0.0f;
-        public string       bat_soh                             => $"{bat_soh_raw:0.0}{Preferences.Instance.UnitSpacer}%";
+        public string       bat_soh                             => $"{bat_soh_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}%";
         public float        bat_soc_raw                         { get; private set; } = 0.0f;
-        public string       bat_soc                             => $"{bat_soc_raw:0.0}{Preferences.Instance.UnitSpacer}%";
+        public string       bat_soc                             => $"{bat_soc_raw:0}{OVMSPreferences.Instance.UnitSpacer}%";
         public float        bat_power_kw                        { get; private set; } = 0.0f;
         public float        bat_voltage                         { get; private set; } = 0.0f;
 
         public float        bat_range_estimated_raw             { get; private set; } = 0.0f;
-        public string       bat_range_estimated                 { get { return string.Format("{0:0.0}{1}{2}", bat_range_estimated_raw, Preferences.Instance.UnitSpacer, unit_distance); } }
+        public string       bat_range_estimated                 => $"{bat_range_estimated_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}{unit_distance}"; 
         public float        bat_range_ideal_raw                 { get; private set; } = 0.0f;
-        public string       bat_range_ideal                     { get { return string.Format("{0:0.0}{1}{2}", bat_range_ideal_raw, Preferences.Instance.UnitSpacer, unit_distance); } }
+        public string       bat_range_ideal                     => $"{bat_range_ideal_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}{unit_distance}"; 
         public float        bat_range_full_raw                  { get; private set; } = 0.0f;
-        public string       bat_range_full                      { get { return string.Format("{0}{1}{2}", bat_range_full_raw, Preferences.Instance.UnitSpacer, unit_distance); } }
+        public string       bat_range_full                      => $"{bat_range_full_raw}{OVMSPreferences.Instance.UnitSpacer}{unit_distance}"; 
 
         public float        charge_voltage_raw                  { get; private set; } = 0.0f;
-        public string       charge_voltage                      { get { return string.Format("{0:0.0}{1}V", charge_voltage_raw, Preferences.Instance.UnitSpacer); } }
+        public string       charge_voltage                      => $"{charge_voltage_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}V"; 
         public float        charge_current_raw                  { get; private set; } = 0.0f;
-        public string       charge_current                      { get { return string.Format("{0:0.0}{1}A", charge_current_raw, Preferences.Instance.UnitSpacer); } }
-        public string       charge_voltagecurrent               { get { return string.Format("{0:0.0}{2}V {1:0.0}{2}A", charge_voltage_raw, charge_current_raw, Preferences.Instance.UnitSpacer); } }
+        public string       charge_current                      => $"{charge_current_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}A";  
+        public string       charge_voltagecurrent               => $"{charge_voltage_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}V {charge_current_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}A"; 
         public float        charge_currentlimit_raw             { get; private set; } = 0.0f;
-        public string       charge_currentimit                  { get { return string.Format("{0:0.0}{1}A", charge_currentlimit_raw, Preferences.Instance.UnitSpacer); } }
+        public string       charge_currentimit                  => $"{charge_currentlimit_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}A"; 
         public int          charge_state_i_raw                  { get; private set; } = 0;
         public string       charge_state_s_raw                  { get; private set; } = "";
-        public string       charge_state                        { get { return charge_state_s_raw; } }
-        public int          charge_substate                     { get; private set; } = 0;
+        public string       charge_state                        => (!string.IsNullOrEmpty(charge_state_s_raw)) ? charge_state_s_raw : GetChargeState(charge_state_i_raw);
+        public int          charge_substate_i_raw               { get; private set; } = 0;
+        public string       charge_substate_s_raw               { get; private set; } = "";
+        public string       charge_substate                     => (!string.IsNullOrEmpty(charge_substate_s_raw)) ? charge_substate_s_raw : GetChargeSubstate(charge_substate_i_raw);
         public int          charge_mode_i_raw                   { get; private set; } = 0;
         public string       charge_mode_s_raw                   { get; private set; } = "";
-        public string       charge_mode                         { get; private set; } = "";
-        public int          charge_plugtype                     { get; private set; } = 0;
+        public string       charge_mode                         => (!string.IsNullOrEmpty(charge_mode_s_raw)) ? charge_mode_s_raw : GetChargeMode(charge_mode_i_raw);
+        public int          charge_plugtype_i_raw               { get; private set; } = 0;
+        public string       charge_plugtype_s_raw               { get; private set; } = "";
+        public string       charge_plugtype                     => (!string.IsNullOrEmpty(charge_plugtype_s_raw)) ? charge_plugtype_s_raw : GetChargePlugType(charge_plugtype_i_raw);
         public int          charge_duration                     { get; private set; } = 0;
         public int          charge_estimate                     { get; private set; } = 0;
         public int          charge_b4                           { get; private set; } = 0;
-        public int          charge_kwhconsumed                  { get; private set; } = 0;
+        public int          charge_kwhconsumed_i_raw            { get; private set; } = 0;
+        public string       charge_kwhconsumed                  => $"{charge_kwhconsumed_i_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}KWh";  
 
         public int          charge_timermode_raw                { get; private set; } = 0;
-        public bool         charge_timer                        { get { return (charge_timermode_raw > 0); } }
+        public bool         charge_timer                        => (charge_timermode_raw > 0);
         public int          charge_timerstart_raw               { get; private set; } = 0;
         public string       charge_time                         { get; private set; } = "";
 
@@ -150,16 +160,17 @@ namespace OpenVehicle.LibNet.Entities
         public int          charge_limit_minsremaining          { get; private set; } = 0;
         public int          charge_limit_minsremaining_range    { get; private set; } = 0;
         public int          charge_limit_minsremaining_soc      { get; private set; } = 0;
-        public int          charge_limit_soclimit               { get; private set; } = 0;
+        public int          charge_limit_soclimit_raw           { get; private set; } = 0;
+        public string       charge_limit_soclimit               => $"{charge_limit_soclimit_raw:0}{OVMSPreferences.Instance.UnitSpacer}%";
         public float        charge_limit_rangelimit_raw         { get; private set; } = 0.0f;
-        public string       charge_limit_rangelimit             { get { return string.Format("{0:0}{1}{2}", charge_limit_rangelimit_raw, Preferences.Instance.UnitSpacer, unit_distance); } }
+        public string       charge_limit_rangelimit             => $"{charge_limit_rangelimit_raw:0}{OVMSPreferences.Instance.UnitSpacer}{unit_distance}";
 
         public int          cooldown_cooling                    { get; private set; } = 0;
         public int          cooldown_tbattery                   { get; private set; } = 0;
         public int          cooldown_timelimit                  { get; private set; } = 0;
 
         public int          stale_chargetimer_raw               { get; private set; } = 0;
-        public DataStale    stale_chargetimer                   { get { return GetDataStale(stale_chargetimer_raw); } }
+        public DataStale    stale_chargetimer                   => GetDataStale(stale_chargetimer_raw); 
         public DataStale    stale_status                        { get; private set; } = DataStale.Good;
 
         //
@@ -169,10 +180,12 @@ namespace OpenVehicle.LibNet.Entities
         public double       pos_longitude                       { get; private set; } = 0.0;
         public double       pos_direction                       { get; private set; } = 0.0;
         public double       pos_altitude                        { get; private set; } = 0.0;
+        public BasicGeoposition  pos_geoposition                => GetGeoposition(pos_latitude, pos_longitude, pos_altitude);
+        public Geopoint          pos_geopoint                   => new Geopoint(pos_geoposition);
         public int          pos_gpslock_raw                     { get; private set; } = 0;
-        public bool         pos_gpslock                         { get { return (pos_gpslock_raw > 0); } }
+        public bool         pos_gpslock                         => (pos_gpslock_raw > 0) ? true : false;
         public float        pos_gpsspeed_raw                    { get; private set; } = 0.0f;
-        public string       pos_gpsspeed                        { get { return string.Format("{0:0.#}{1}{2}", pos_gpsspeed_raw, Preferences.Instance.UnitSpacer, unit_speed); } }
+        public string       pos_gpsspeed                        => $"{pos_gpsspeed_raw:0.#}{OVMSPreferences.Instance.UnitSpacer}{unit_speed}";
 
         public int          drive_mode                          { get; private set; } = 0;
         public float        drive_power                         { get; private set; } = 0.0f;
@@ -180,116 +193,136 @@ namespace OpenVehicle.LibNet.Entities
         public float        drive_energy_recovered              { get; private set; } = 0.0f;
 
         public int          stale_pos_raw                       { get; private set; } = 0;
-        public DataStale    stale_pos                           { get { return GetDataStale(stale_pos_raw); } }
+        public DataStale    stale_pos                           => GetDataStale(stale_pos_raw);
 
         //
         // Doors / Switches & environment (message "D")
         //
         public int          env_flags1_raw                      { get; private set; } = 0;
-        public bool         env_started                         { get { return GetBitField(env_flags1_raw, 0x80); } }
-        public bool         env_handbrake_on                    { get { return GetBitField(env_flags1_raw, 0x40); } }
-        public bool         env_charging                        { get { return GetBitField(env_flags1_raw, 0x10); } }
-        public bool         env_pilot_present                   { get { return GetBitField(env_flags1_raw, 0x08); } }
-        public bool         door_chargeport_open                { get { return GetBitField(env_flags1_raw, 0x04); } }
-        public bool         door_frontright_open                { get { return GetBitField(env_flags1_raw, 0x02); } }
-        public bool         door_frontleft_open                 { get { return GetBitField(env_flags1_raw, 0x01); } }
+        public bool         env_started                         => GetBitField(env_flags1_raw, 0x80);
+        public bool         env_handbrake_on                    => GetBitField(env_flags1_raw, 0x40);
+        public bool         env_charging                        => GetBitField(env_flags1_raw, 0x10);
+        public bool         env_pilot_present                   => GetBitField(env_flags1_raw, 0x08);
+        public bool         door_chargeport_open                => GetBitField(env_flags1_raw, 0x04);
+        public bool         door_frontright_open                => GetBitField(env_flags1_raw, 0x02);
+        public bool         door_frontleft_open                 => GetBitField(env_flags1_raw, 0x01);
 
         public int          env_flags2_raw                      { get; private set; } = 0;
-        public bool         door_trunk_open                     { get { return GetBitField(env_flags2_raw, 0x80); } }
-        public bool         door_bonnet_open                    { get { return GetBitField(env_flags2_raw, 0x40); } }
-        public bool         env_headlights_on                   { get { return GetBitField(env_flags2_raw, 0x20); } }
-        public bool         env_valetmode                       { get { return GetBitField(env_flags2_raw, 0x10); } }
-        public bool         env_locked                          { get { return GetBitField(env_flags2_raw, 0x08); } }
+        public bool         door_trunk_open                     => GetBitField(env_flags2_raw, 0x80);
+        public bool         door_bonnet_open                    => GetBitField(env_flags2_raw, 0x40);
+        public bool         env_headlights_on                   => GetBitField(env_flags2_raw, 0x20);
+        public bool         env_valetmode                       => GetBitField(env_flags2_raw, 0x10);
+        public bool         env_locked                          => GetBitField(env_flags2_raw, 0x08);
 
         public int          env_flags3_raw                      { get; private set; } = 0;
-        public bool         env_awake                           { get { return GetBitField(env_flags3_raw, 0x02); } }
+        public bool         env_awake                           => GetBitField(env_flags3_raw, 0x01); 
 
         public int          env_flags4_raw                      { get; private set; } = 0;
-        public bool         env_alarm_sounding                  { get { return GetBitField(env_flags4_raw, 0x02); } }
+        public bool         env_alarm_sounding                  => GetBitField(env_flags4_raw, 0x02); 
 
         public int          env_flags5_raw                      { get; private set; } = 0;
-        public bool         bat_12v_charging                    { get { return GetBitField(env_flags5_raw, 0x10); } }
-        public bool         door_rearright_open                 { get { return GetBitField(env_flags5_raw, 0x02); } }
-        public bool         door_rearleft_open                  { get { return GetBitField(env_flags5_raw, 0x01); } }
+        public bool         env_aircon_on                       => GetBitField(env_flags5_raw, 0x80);
+        public bool         bat_12v_charging                    => GetBitField(env_flags5_raw, 0x10); 
+        public bool         door_rearright_open                 => GetBitField(env_flags5_raw, 0x02); 
+        public bool         door_rearleft_open                  => GetBitField(env_flags5_raw, 0x01); 
 
         public int          env_lockstate_raw                   { get; private set; } = 0;
         public int          env_parkedtime_raw                  { get; private set; } = 0;
-        public DateTime     env_parkedtime                      { get { return DateTime.Now.AddSeconds( -1 * env_parkedtime_raw ); } }
+        public DateTime     env_parkedtime                      => DateTime.Now.AddMinutes( -1 * env_parkedtime_raw ); 
 
         public DataStale    stale_environment                   { get; private set; } = DataStale.Unknown;
 
         public float        temp_pem_raw                        { get; private set; } = 0;
-        public string       temp_pem                            { get { return ConvertTemperatureUnit(temp_pem_raw); } }
+        public string       temp_pem                            => ConvertTemperatureUnit(temp_pem_raw); 
         public int          temp_motor_raw                      { get; private set; } = 0;
-        public string       temp_motor                          { get { return ConvertTemperatureUnit(temp_motor_raw); } }
+        public string       temp_motor                          => ConvertTemperatureUnit(temp_motor_raw); 
         public int          temp_battery_raw                    { get; private set; } = 0;
-        public string       temp_battery                        { get { return ConvertTemperatureUnit(temp_battery_raw); } }
+        public string       temp_battery                        => ConvertTemperatureUnit(temp_battery_raw); 
         public float        temp_charger_raw                    { get; private set; } = 0.0f;
-        public string       temp_charger                        { get { return ConvertTemperatureUnit(temp_charger_raw); } }
+        public string       temp_charger                        => ConvertTemperatureUnit(temp_charger_raw); 
         public float        temp_cabin_raw                      { get; private set; } = 0;
-        public string       temp_cabin                          { get { return ConvertTemperatureUnit(temp_cabin_raw); } }
+        public string       temp_cabin                          => ConvertTemperatureUnit(temp_cabin_raw); 
 
         public int          stale_temps_raw                     { get; private set; } = 0;
-        public DataStale    stale_temps                         { get { return GetDataStale(stale_temps_raw); } }
+        public DataStale    stale_temps                         => GetDataStale(stale_temps_raw); 
 
         public float        temp_ambient_raw                    { get; private set; } = 0.0f;
-        public string       temp_ambient                        { get { return ConvertTemperatureUnit(temp_ambient_raw); } }
+        public string       temp_ambient                        => ConvertTemperatureUnit(temp_ambient_raw); 
 
         public int          stale_temp_ambient_raw              { get; private set; } = 0;
-        public DataStale    stale_temp_ambient                  { get { return GetDataStale(stale_temp_ambient_raw); } }
+        public DataStale    stale_temp_ambient                  => GetDataStale(stale_temp_ambient_raw); 
 
         public float        pos_speed_raw                       { get; private set; } = 0.0f;
-        public string       pos_speed                           { get { return string.Format("{0:0.#}{1}{2}", pos_speed_raw, Preferences.Instance.UnitSpacer, unit_speed); } }
+        public string       pos_speed                           => $"{pos_speed_raw:0.#}{OVMSPreferences.Instance.UnitSpacer}{unit_speed}"; 
         public float        pos_tripmeter_raw                   { get; private set; } = 0.0f;
-        public string       pos_tripmeter                       { get { return string.Format("{0:0.#}{1}{2}", pos_tripmeter_raw, Preferences.Instance.UnitSpacer, unit_distance); } }
+        public string       pos_tripmeter                       => $"{pos_tripmeter_raw:#,###,##0.#}{OVMSPreferences.Instance.UnitSpacer}{unit_distance}"; 
         public float        pos_odometer_raw                    { get; private set; } = 0.0f;
-        public string       pos_odometer                        { get { return string.Format("{0:0}{1}{2}", pos_odometer_raw, Preferences.Instance.UnitSpacer, unit_distance); } }
+        public string       pos_odometer                        => $"{pos_odometer_raw:#,###,##0}{OVMSPreferences.Instance.UnitSpacer}{unit_distance}"; 
                                                    
         public float        bat_12v_voltage_raw                 { get; private set; } = 0.0f;
-        public string       bat_12v_voltage                     => $"{bat_12v_voltage_raw:0.0}{Preferences.Instance.UnitSpacer}V";
+        public string       bat_12v_voltage                     => $"{bat_12v_voltage_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}V";
         public float        bat_12v_voltage_ref_raw             { get; private set; } = 0.0f;
-        public string       bat_12v_voltage_ref                 => $"{bat_12v_voltage_ref_raw:0.0}{Preferences.Instance.UnitSpacer}V";
+        public string       bat_12v_voltage_ref                 => $"{bat_12v_voltage_ref_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}V";
         public float        bat_12v_current_raw                 { get; private set; } = 0.0f;
-        public string       bat_12v_current                     => $"{bat_12v_current_raw:0.0}{Preferences.Instance.UnitSpacer}A";
+        public string       bat_12v_current                     => $"{bat_12v_current_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}A";
+        public string       bat_12v_voltagecurrent              => $"{bat_12v_voltage_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}V {bat_12v_current_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}A"; 
+        public string       bat_12v_voltagerefcurrent           => $"{bat_12v_voltage_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}V (ref={bat_12v_voltage_ref_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}V) {bat_12v_current_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}A"; 
 
         //
         // Tire Pressure (message "W")
         //
         public float        tpms_fr_pressure_raw                { get; private set; } = 0.0f;
-        public string       tpms_fr_pressure                    { get { return string.Format("{0:#.0}{1}psi", tpms_fr_pressure_raw, Preferences.Instance.UnitSpacer); } }
+        public string       tpms_fr_pressure                    => $"{tpms_fr_pressure_raw:#.0}{OVMSPreferences.Instance.UnitSpacer}psi"; 
         public float        tpms_rr_pressure_raw                { get; private set; } = 0.0f;
-        public string       tpms_rr_pressure                    { get { return string.Format("{0:#.0}{1}psi", tpms_rr_pressure_raw, Preferences.Instance.UnitSpacer); } }
+        public string       tpms_rr_pressure                    => $"{tpms_rr_pressure_raw:#.0}{OVMSPreferences.Instance.UnitSpacer}psi"; 
         public float        tpms_fl_pressure_raw                { get; private set; } = 0.0f;
-        public string       tpms_fl_pressure                    { get { return string.Format("{0:#.0}{1}psi", tpms_fl_pressure_raw, Preferences.Instance.UnitSpacer); } }
+        public string       tpms_fl_pressure                    => $"{tpms_fl_pressure_raw:#.0}{OVMSPreferences.Instance.UnitSpacer}psi"; 
         public float        tpms_rl_pressure_raw                { get; private set; } = 0.0f;
-        public string       tpms_rl_pressure                    { get { return string.Format("{0:#.0}{1}psi", tpms_rl_pressure_raw, Preferences.Instance.UnitSpacer); } }
+        public string       tpms_rl_pressure                    => $"{tpms_rl_pressure_raw:#.0}{OVMSPreferences.Instance.UnitSpacer}psi"; 
 
         public float        tpms_fr_temp_raw                    { get; private set; } = 0.0f;
-        public string       tpms_fr_temp                        { get { return ConvertTemperatureUnit(tpms_fr_temp_raw); } }
+        public string       tpms_fr_temp                        => ConvertTemperatureUnit(tpms_fr_temp_raw); 
         public float        tpms_rr_temp_raw                    { get; private set; } = 0.0f;
-        public string       tpms_rr_temp                        { get { return ConvertTemperatureUnit(tpms_rr_temp_raw); } }
+        public string       tpms_rr_temp                        => ConvertTemperatureUnit(tpms_rr_temp_raw); 
         public float        tpms_fl_temp_raw                    { get; private set; } = 0.0f;
-        public string       tpms_fl_temp                        { get { return ConvertTemperatureUnit(tpms_fl_temp_raw); } }
+        public string       tpms_fl_temp                        => ConvertTemperatureUnit(tpms_fl_temp_raw); 
         public float        tpms_rl_temp_raw                    { get; private set; } = 0.0f;
-        public string       tpms_rl_temp                        { get { return ConvertTemperatureUnit(tpms_rl_temp_raw); } }
+        public string       tpms_rl_temp                        => ConvertTemperatureUnit(tpms_rl_temp_raw); 
 
         public int          stale_tpms_raw                      { get; private set; } = 0;
-        public DataStale    stale_tpms                          { get { return GetDataStale(stale_tpms_raw); } }
+        public DataStale    stale_tpms                          => GetDataStale(stale_tpms_raw); 
 
         //
         // Other
         //
 
         // Renault Twizy specific
-    	public int         rt_cfg_type              { get { return (car_type=="RT") ? (drive_mode & 0x01)      : 0; } }		// CFG: 0=Twizy80, 1=Twizy45
-    	public int         rt_cfg_profile_user      { get { return (car_type=="RT") ? (drive_mode & 0x06) >> 1 : 0; } }		// CFG: user selected profile: 0=Default, 1..3=Custom
-    	public int         rt_cfg_profile_cfgmode   { get { return (car_type=="RT") ? (drive_mode & 0x18) >> 3 : 0; } }		// CFG: profile, cfgmode params were last loaded from
-    	public int         rt_cfg_unsaved           { get { return (car_type=="RT") ? (drive_mode & 0x20) >> 5 : 0; } } 	// CFG: RAM profile changed & not yet saved to EEPROM
-    	public int         rt_cfg_applied           { get { return (car_type=="RT") ? (drive_mode & 0x80) >> 7 : 0; } }		// CFG: applyprofile success flag
+    	public int         rt_cfg_type                          => (car_type=="RT") ? (drive_mode & 0x01)      : 0; 	// CFG: 0=Twizy80, 1=Twizy45
+    	public int         rt_cfg_profile_user                  => (car_type=="RT") ? (drive_mode & 0x06) >> 1 : 0; 	// CFG: user selected profile: 0=Default, 1..3=Custom
+    	public int         rt_cfg_profile_cfgmode               => (car_type=="RT") ? (drive_mode & 0x18) >> 3 : 0; 	// CFG: profile, cfgmode params were last loaded from
+    	public int         rt_cfg_unsaved                       => (car_type=="RT") ? (drive_mode & 0x20) >> 5 : 0;  	// CFG: RAM profile changed & not yet saved to EEPROM
+    	public int         rt_cfg_applied                       => (car_type=="RT") ? (drive_mode & 0x80) >> 7 : 0;     // CFG: applyprofile success flag
 
         #pragma warning restore IDE1006 // Naming Styles
         #endregion RAW and cleaned-up values from the vehicle
 
+
+        #region values as PropertyList
+
+        public IEnumerable<string> GetPropertyKeys()
+        {
+            return this.GetType().GetProperties().ToList().Select(p => p.Name);
+        }
+
+        public object GetProperty(string key)
+        {
+            PropertyInfo pi = this.GetType().GetProperties().ToList().FirstOrDefault( p => p.Name == key);
+
+            return pi?.GetValue(this);
+        }
+
+
+        #endregion values as PropertyList
 
         #region construction
 
@@ -341,10 +374,10 @@ namespace OpenVehicle.LibNet.Entities
                 return "";
 
             else if (unit_distance == "M")
-                return string.Format("{0}{1}mi", distance, Preferences.Instance.UnitSpacer);
+                return $"{distance}{OVMSPreferences.Instance.UnitSpacer}mi";
 
             else
-                return string.Format("{0}{1}km", distance, Preferences.Instance.UnitSpacer);
+                return $"{distance}{OVMSPreferences.Instance.UnitSpacer}km";
         }
 
 
@@ -352,13 +385,13 @@ namespace OpenVehicle.LibNet.Entities
         {
             string unit = "C";
 
-            if (Preferences.Instance.UnitForTemperature == Preferences.UnitTemperature.Fahrenheit)
+            if (OVMSPreferences.Instance.UnitForTemperature == OVMSPreferences.UnitTemperature.Fahrenheit)
             {
                 temperature = (temperature * 9.0f / 5.0f) + 32.0f;
                 unit = "F";
             }
 
-            return string.Format("{0:#.0}{1}{2}{3}", temperature, Preferences.Instance.UnitSpacer, '\u00B0', unit);
+            return $"{temperature:#.0}{OVMSPreferences.Instance.UnitSpacer}{'\u00B0'}{unit}";
         }
 
 
@@ -388,6 +421,77 @@ namespace OpenVehicle.LibNet.Entities
                 return 5;
         }
 
+
+        private BasicGeoposition GetGeoposition(double latitude, double longitude, double altitude = 0.0)
+        {
+            return new BasicGeoposition()
+            {
+                Latitude  = latitude,
+                Longitude = longitude,
+                Altitude  = altitude
+            };
+        }
+
+
+        internal string GetChargeState(int key)
+        {
+            switch (key)
+            {
+                case  1: return "Charging";   
+                case  2: return "Top off";     
+                case  4: return "Done";       
+                case 13: return "Prepare";    
+                case 14: return "Timer wait";  
+                case 15: return "Heating";    
+                case 21: return "Stopped";    
+                default: return "";
+            }
+        }
+
+
+        internal string GetChargeSubstate(int key)
+        {
+            switch (key)
+            {
+                case 0x01: return "Scheduled stop";   
+                case 0x02: return "Scheduled start";  
+                case 0x03: return "On request";       
+                case 0x05: return "timer wait";       
+                case 0x07: return "Power wait";       
+                case 0x0d: return "Stopped";         
+                case 0x0e: return "Interrupted";     
+                default:   return "";
+            }
+        }
+
+
+        internal string GetChargeMode(int key)
+        {
+            switch (key)
+            {
+                case 0:  return "Standard";     
+                case 1:  return "Storage";      
+                case 3:  return "Range";        
+                case 4:  return "Performance";  
+                default: return "";
+            }
+        }
+
+        internal string GetChargePlugType(int key)
+        {
+            switch (key)
+            {
+                case 1:  return "Type 1";
+                case 2:  return "Type 2";
+                case 3:  return "ChaDeMo";
+                case 4:  return "Toadster";        
+                case 5:  return "Tesla-US";  
+                case 6:  return "SuperCharger";  
+                case 7:  return "CSS";  
+                default: return "";
+            }
+        }
+
         #endregion Property Formatting methods
 
 
@@ -398,9 +502,8 @@ namespace OpenVehicle.LibNet.Entities
         //
         internal void ProcessResetServer()
         {
-            server_lastupdated_raw      = 0;
-            server_cars_connected   = 0;
-
+            server_cars_connected       = 0;
+            server_lastupdated          = DateTime.Now;
             server_paranoid             = false;
         }
 
@@ -436,7 +539,7 @@ namespace OpenVehicle.LibNet.Entities
         {
             if (msg.Params.Count > 0)
             {
-                server_lastupdated_raw      = long.Parse(msg.Params[0]);
+                server_lastupdated         = DateTime.Now.AddSeconds( -1 * long.Parse(msg.Params[0]) );
             }
         }
 
@@ -514,8 +617,8 @@ namespace OpenVehicle.LibNet.Entities
                 charge_currentlimit_raw             = float.Parse(msg.Params[8]);
                 charge_duration                     = int.Parse(msg.Params[9]);
                 charge_b4                           = int.Parse(msg.Params[10]);
-                charge_kwhconsumed                  = int.Parse(msg.Params[11]);
-                charge_substate                     = int.Parse(msg.Params[12]);
+                charge_kwhconsumed_i_raw            = int.Parse(msg.Params[11]);
+                charge_substate_i_raw               = int.Parse(msg.Params[12]);
                 charge_state_i_raw                  = int.Parse(msg.Params[13]);
                 charge_mode_i_raw                   = int.Parse(msg.Params[14]);
             }
@@ -534,7 +637,7 @@ namespace OpenVehicle.LibNet.Entities
                 charge_full_minsremaining           = int.Parse(msg.Params[19]);
                 charge_limit_minsremaining          = int.Parse(msg.Params[20]);
                 charge_limit_rangelimit_raw         = float.Parse(msg.Params[21]);
-                charge_limit_soclimit               = int.Parse(msg.Params[22]);
+                charge_limit_soclimit_raw           = int.Parse(msg.Params[22]);
                 cooldown_cooling                    = int.Parse(msg.Params[23]);
                 cooldown_tbattery                   = int.Parse(msg.Params[24]);
                 cooldown_timelimit                  = int.Parse(msg.Params[25]);
@@ -548,7 +651,7 @@ namespace OpenVehicle.LibNet.Entities
             }
             if (msg.Params.Count > 32)
             {
-                charge_plugtype                     = int.Parse(msg.Params[30]);
+                charge_plugtype_i_raw               = int.Parse(msg.Params[30]);
                 bat_power_kw                        = float.Parse(msg.Params[31]);
                 bat_voltage                         = float.Parse(msg.Params[32]);
             }
@@ -604,8 +707,8 @@ namespace OpenVehicle.LibNet.Entities
                 temp_pem_raw                        = float.Parse(msg.Params[3]);
                 temp_motor_raw                      = int.Parse(msg.Params[4]);
                 temp_battery_raw                    = int.Parse(msg.Params[5]);
-                pos_tripmeter_raw                   = float.Parse(msg.Params[6]);
-                pos_odometer_raw                    = float.Parse(msg.Params[7]);
+                pos_tripmeter_raw                   = float.Parse(msg.Params[6]) / 10.0f;
+                pos_odometer_raw                    = float.Parse(msg.Params[7]) / 10.0f;
                 pos_speed_raw                       = float.Parse(msg.Params[8]);
 
                 stale_environment                   = DataStale.Good;
@@ -663,6 +766,7 @@ namespace OpenVehicle.LibNet.Entities
         }
 
         #endregion Extract values from OVMS messages
+
 
     }
 

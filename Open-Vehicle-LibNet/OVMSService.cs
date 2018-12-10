@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -45,9 +46,17 @@ namespace OpenVehicle.LibNet
         {
         }
 
+        // Our main instance
         public static OVMSService Instance
         {
             get { return Nested.instance; }
+        }
+
+        // Allow to create extra / parallel instances next to the main instance
+        // This is usefull for background threads
+        public static OVMSService CreateExtraInstance()
+        {
+            return new OVMSService();
         }
 
         private class Nested
@@ -60,6 +69,8 @@ namespace OpenVehicle.LibNet
 
             internal static readonly OVMSService instance = new OVMSService();
         }
+
+
 
         #endregion singleton
 
@@ -106,78 +117,125 @@ namespace OpenVehicle.LibNet
         #region properties
 
         // Our config settings and resulting car-data
-        public CarData      CarData             { get; private set; } = new CarData();
         public CarSettings  SelectedCarSettings { get; private set; } = null;
+
+        // Car Data received from the server
+        public CarData      CarData             { get; private set; } = new CarData();
 
         #endregion properties
 
+
         #region members
 
+#if OPENVEHICLE_LIBNET_LOG
         // For logging from the library
-        // Compatible with NLog, Log4Net, SeriLog, Loupe in calling application
-        private static readonly ILog logger = LogProvider.For<OVMSService>();
+        // LibLog is compatible with NLog, Log4Net, SeriLog, Loupe in calling application
+        private static readonly ILog    logger              = OpenVehicle.LibNet.Logging.LogProvider.For<OVMSConnection>();
+#else 
+        private static readonly ILog    logger              = null;
+#endif 
 
         // The connection to the server
-        private OVMSConnection  m_ovmsConnection    = null;
+        private OVMSConnection          m_ovmsConnection    = null;
 
         // Main loop
-        private bool            m_loopIsRunning     = false;
-        private Task            m_loopTask          = null;
+        private Task                    m_loopTask          = null;
+        private volatile SemaphoreSlim  m_loopSemaphore     = new SemaphoreSlim(1);
+        private volatile bool           m_loopIsRunning     = false;
+        private volatile AutoResetEvent m_loopStopped       = new AutoResetEvent(false);
 
         // Periodic ping to keep connection to server alive
-        private Timer           m_pingTimer         = null;
+        private Timer                   m_pingTimer         = null;
+
 
         // Paranoid Mode encryption key
-        private byte[]          m_pmKey             = null;
+        private byte[]                  m_pmKey             = null;
 
-        #endregion members
+#endregion members
 
-
-        #region Start / Stop
+        
+#region Start / Stop
 
         public async Task StartAsync(CarSettings settings)
         {
-            // If needed, stop service for previous car selection
-            if (m_loopIsRunning ||
-                m_loopTask != null)
+            // Sanity check
+            if (settings == null)
+                return;
+
+            // Do not allow a next start or stop before the previous one has completed
+            // Otherwise we risk having multiple MainLoops
+            await m_loopSemaphore.WaitAsync();
+            try
             {
-                await StopAsync();
+                // If needed, stop service for previous car selection
+                if (m_loopIsRunning)
+                    await _StopAsync();
+
+                logger.Info("Starting OVMS connection");
+
+                SelectedCarSettings = settings;
+
+                // Start main loop
+                m_loopIsRunning = true;
+                m_loopTask      = _MainLoop();        // Do not await _MainLoop here! We await it during the StopAsync instead...
             }
-
-            logger.Info("Starting OVMS connection");
-
-            SelectedCarSettings = settings;
-
-            // Start main loop
-            m_loopIsRunning = true;
-            m_loopTask = _MainLoop();        // do not await!
-
-            // To keep the compiler happy
-            await Task.Delay(0);    
+            catch (Exception ex)
+            {
+                logger.ErrorException("Error in OVMSService.StartAsync. ", ex);
+            }        
+            finally
+            {
+                m_loopSemaphore.Release();
+            }
         }
 
 
+        // Do not allow a next start or stop before the previous one has completed
+        // Otherwise we risk having multiple MainLoops
         public async Task StopAsync()
+        {
+            await m_loopSemaphore.WaitAsync();
+            try
+            {
+                await _StopAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException("Error in OVMSService.StopAsync. ", ex);
+            }        
+            finally
+            {
+                m_loopSemaphore.Release();
+            }
+        }
+
+
+        private async Task _StopAsync()
         {
             logger.Info("Stopping OVMS connection");
 
             // signal main loop to stop
             m_loopIsRunning = false;
 
-            // Trigger an ping to get the waiting m_ovmsConnection.ReceiveLine() to return
+            // Trigger a final ping to get the waiting m_ovmsConnection.ReceiveLine() to return
             await _TransmitPing();
 
             // wait till loop is done
-            await m_loopTask.ConfigureAwait(false);
-            m_loopTask = null;
+            if (m_loopTask != null)
+            {
+                await m_loopTask;
+                m_loopTask = null;
+
+                //AJH m_loopStopped.WaitOne();
+            }
 
             logger.Info("Stopped OVMS connection");
         }
 
-        #endregion Start / Stop
+#endregion Start / Stop
 
 
-        #region Main loop
+#region Main loop
 
         private async Task _MainLoop()
         {
@@ -194,7 +252,7 @@ namespace OpenVehicle.LibNet
                     CarData.ProcessResetServer();
 
                     // Connect to the OVMS server
-                    await PublishProgressAsync(ProgressType.ConnectBegin, SelectedCarSettings.ovmsServer);
+                    await PublishProgressAsync(ProgressType.ConnectBegin, SelectedCarSettings.ovms_server);
 
                     m_ovmsConnection = await OVMSConnection.ConnectAsync(SelectedCarSettings);
             
@@ -203,7 +261,7 @@ namespace OpenVehicle.LibNet
                         await PublishProgressAsync(ProgressType.Error, "Could not connect to the OVMS server");
                         return;
                     }
-                    await PublishProgressAsync(ProgressType.ConnectComplete, SelectedCarSettings.ovmsServer);
+                    await PublishProgressAsync(ProgressType.ConnectComplete, SelectedCarSettings.ovms_server);
 
                     // Start ping timer
                     StartPing();
@@ -237,30 +295,38 @@ namespace OpenVehicle.LibNet
                 StopPing();
                 
                 if (m_ovmsConnection != null)
+                {
                     await m_ovmsConnection.DisconnectAsync();
+                    m_ovmsConnection = null;
+                }
 
-                await PublishProgressAsync(ProgressType.Disconnect, SelectedCarSettings.ovmsServer);
+                await PublishProgressAsync(ProgressType.Disconnect, SelectedCarSettings.ovms_server);
             }
+
+            // Signal the main loop has now stopped
+            //AJH m_loopStopped.Set();
         }
 
-        #endregion Main Loop
+#endregion Main Loop
 
 
-        #region Ping
+#region Ping
 
         private const int   PING_PERIOD     = 5*60*1000;        // 5 minutes
 
 
         private void StartPing()
         {
-            m_pingTimer = new Timer(_OnPing, null, PING_PERIOD, PING_PERIOD );
+            if (m_pingTimer == null)
+                m_pingTimer = new Timer(_OnPing, null, PING_PERIOD, PING_PERIOD);
+            else
+                m_pingTimer.Change(PING_PERIOD, PING_PERIOD);
         }
 
 
         private void StopPing()
         {
-            m_pingTimer.Change(0, 0);
-            m_pingTimer.Dispose();
+            m_pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
 
@@ -276,38 +342,96 @@ namespace OpenVehicle.LibNet
             await TransmitMessageAsync( new OVMSMessage('A') );
         }
 
-        #endregion Ping
+#endregion Ping
 
 
-        #region Transmit / Receive on message level
+#region Transmit on command level
 
-        public async Task TransmitMessageAsync(OVMSMessage cmd)
+        public enum Command : byte
         {
-            string msg = string.Format("MP-0 {0}{1}", cmd.Code, string.Join(",", cmd.Params) );
-
-            await m_ovmsConnection.TransmitLineAsync(msg);
+            GetFeatureList          = 1,
+            SetFeature              = 2,    // with param <feature_number>,<value>
+            GetParameterList        = 3,    
+            SetParameter            = 4,    // with param <param_number>,<value>
+            Reboot                  = 5,
+            Shell                   = 7,    // with param <cmd>
+            SetChargeMode           = 10,   // with param <mode>
+            ChargeStart             = 11,
+            ChargeStop              = 12,
+            SetChargeCurrentLimit   = 15,   // with param <current> as current limit in Amps
+            SetChargeModeCurrent    = 16,   // with param <mode>,<current> 
+            WakeUpCar               = 18,
+            WakeUpClimateSubSystem  = 19,
+            Lock                    = 20,   // with param <pin>
+            ValetEnable             = 21,   // with param <pin>
+            Unlock                  = 22,   // with param <pin>
+            ValetDisable            = 23,   // with param <pin>
+            HomeLink                = 24,   // with param 0, 1, 2 or without param for default
+            Aircon                  = 26,   // with param 0=turn off, 1=turn on
+            CellularUsage           = 30,
+            MMI_USSD                = 41,   // with param <cmd>
+            Modem                   = 49,   // with param <cmd>
+            SetChargeAlerts         = 204   // with param <suffRange>,<suffSOC>,<chgPower>,<chgMode>
         }
 
 
-        public async Task<OVMSMessage> ReceiveMessageAsync()
+        public bool IsCommandSupported(Command cmdCode)
         {
-            string msg = await m_ovmsConnection.ReceiveLineAsync();
-            if (msg == null)
+            return CarData.command_support[ (int)cmdCode ];
+        }
+
+
+        public async Task TransmitCommandAsync(Command cmdCode, string cmdText = "")
+        {
+            OVMSMessage msg;
+
+            if (string.IsNullOrEmpty(cmdText))
+                msg = new OVMSMessage('C', new string[] { cmdCode.ToString() } );
+            else
+                msg = new OVMSMessage('C', new string[] { cmdCode.ToString(), cmdText } );
+
+            await TransmitMessageAsync(msg);
+        }
+
+#endregion Transmit on command level
+
+
+#region Transmit / Receive on message level
+
+        private async Task TransmitMessageAsync(OVMSMessage msg)
+        {
+            if (m_ovmsConnection == null || !m_ovmsConnection.Connected)
+                return;
+
+            char   code  = msg.Code;
+            string parms = string.Join(",", msg.Params);
+
+            await m_ovmsConnection.TransmitLineAsync( $"MP-0 {code}{parms}" );
+        }
+
+
+        private async Task<OVMSMessage> ReceiveMessageAsync()
+        {
+            if (m_ovmsConnection == null || !m_ovmsConnection.Connected)
                 return null;
 
-            if (msg.Length < 6 || !msg.StartsWith("MP-0 ") )
+            string line = await m_ovmsConnection.ReceiveLineAsync();
+            if (line == null)
+                return null;
+
+            if (line.Length < 6 || !line.StartsWith("MP-0 ") )
             {
-                logger.WarnFormat("*** Unknown protection scheme: {0}", msg.Substring(0,5) );
+                logger.WarnFormat("*** Unknown protection scheme: {0}", line.Substring(0,5) );
                 return null;
             }
 
-            char   msgCode = msg[5];
-            string msgData = msg.Substring(6);
+            char   msgCode = line[5];
+            string msgData = line.Substring(6);
 
             if (msgCode == 'E')
             {
                 // We have a paranoid mode message
-                char pmCode = msgData[0];
+                char pmCode = (msgData.Length > 0) ? msgData[0] : '\0';
 
                 if (pmCode == 'T')
                 {
@@ -315,7 +439,7 @@ namespace OpenVehicle.LibNet
                     try
                     {
                         string  pmToken = msgData.Substring(1);
-                        byte[]  key     = Encoding.UTF8.GetBytes(SelectedCarSettings.selServerPwd);
+                        byte[]  key     = Encoding.UTF8.GetBytes(SelectedCarSettings.server_pwd);
                         HMACMD5 hmac    = new HMACMD5(key);
                         hmac.Initialize();
 
@@ -331,8 +455,8 @@ namespace OpenVehicle.LibNet
                 else if (pmCode == 'M')
                 {
                     // Decrypt the paranoid message
-				    msgCode = msgData[1];
-                    msgData = msgData.Substring(2);
+				    msgCode = (msgData.Length > 1) ? msgData[1] : '\0';
+                    msgData = (msgData.Length > 1) ? msgData.Substring(2) : "";
 
                     try
                     {
@@ -363,14 +487,15 @@ namespace OpenVehicle.LibNet
             }
 
             logger.TraceFormat("{0} MSG Received: {1}", msgCode, msgData);
+            string[] msgParams = (msgData != null) ? msgData?.Split( new char[] { ',' } ) : new string[0];
 
-            return new OVMSMessage(msgCode, msgData.Split( new char[] { ',' } ) );
+            return new OVMSMessage(msgCode,  msgParams);
         }
 
-        #endregion Transmit / Receive on message level
+#endregion Transmit / Receive on message level
 
 
-        #region Process messages
+#region Process messages
 
         private async Task<bool> ProcessMessageAsync(OVMSMessage msg)
         {
@@ -406,7 +531,7 @@ namespace OpenVehicle.LibNet
 
                     case 'P':       // Push notification
                         logger.Debug("Push notification received");
-                        
+
                         // Nothing to do here , the main loop will do a PublishProgress(ProgresType.Push, msg) for this
                         break;
 
@@ -450,17 +575,17 @@ namespace OpenVehicle.LibNet
             catch (Exception ex)
             {
                 logger.ErrorException("{0} MSG Invalid. ", ex, msg.Code);
-                await PublishProgressAsync(ProgressType.Error, string.Format("{0} MSG Invalid.", msg.Code));
 
+                await PublishProgressAsync(ProgressType.Error, string.Format("{0} MSG Invalid.", msg.Code));
                 return false;
             }
         }
 
 
-        #endregion Process commands
+#endregion Process commands
 
 
-        #region OnProgress events
+#region OnProgress events
 
         public enum ProgressType
         {
@@ -530,7 +655,7 @@ namespace OpenVehicle.LibNet
             await Task.Delay(0);
         }
 
-        #endregion OnProgress events
+#endregion OnProgress events
 
 
     }

@@ -1,0 +1,39 @@
+﻿<Page
+    x:Class="OpenVehicle.App.InfoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenVehicle.App"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:UserControl="using:OpenVehicle.App.UserControl"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <ScrollViewer VerticalScrollMode="Auto">
+            <VariableSizedWrapGrid Orientation="Horizontal">
+
+                <StackPanel Orientation="Vertical" Margin="20">                
+                    <UserControl:InfoPageItem LabelText="Vehicle" IsCaption="True" />
+                    <UserControl:InfoPageItem LabelText="ID" ValueText="{x:Bind CarSettings.vehicle_id, Mode=OneWay}" />
+                    <UserControl:InfoPageItem LabelText="VIN" ValueText="{x:Bind CarData.car_vin, Mode=OneWay}" />
+                    <UserControl:InfoPageItem LabelText="Type" ValueText="{x:Bind CarData.car_type, Mode=OneWay}" />
+                    <UserControl:InfoPageItem LabelText="ODO" ValueText="{x:Bind CarData.pos_odometer, Mode=OneWay}" />
+                    <UserControl:InfoPageItem LabelText="GSM" ValueImage="{x:Bind GetGsmBarsImage(CarData.gsm_bars), Mode=OneWay}" ValueText="{x:Bind CarData.gsm_dbm, Mode=OneWay}" />
+                    <UserControl:InfoPageItem LabelText="CAC" ValueText="{x:Bind CarData.bat_cac, Mode=OneWay}" />
+                    <UserControl:InfoPageItem LabelText="SOH" ValueText="{x:Bind CarData.bat_soh, Mode=OneWay}" />
+                    <UserControl:InfoPageItem LabelText="12v" ValueText="{x:Bind CarData.bat_12v_voltagerefcurrent, Mode=OneWay}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Margin="20">
+                    <UserControl:InfoPageItem LabelText="OVMS Firmware" IsCaption="True" />
+                    <UserControl:InfoPageItem LabelText="Server" ValueText="{x:Bind CarData.server_firmware, Mode=OneWay}" />
+                    <UserControl:InfoPageItem LabelText="Car" ValueText="{x:Bind CarData.car_firmware, Mode=OneWay}" />
+                    <UserControl:InfoPageItem LabelText="App" ValueText="{x:Bind AppVersion, Mode=OneTime}" />
+                </StackPanel>
+        
+            </VariableSizedWrapGrid>
+        </ScrollViewer>
+        
+    </Grid>
+</Page>
