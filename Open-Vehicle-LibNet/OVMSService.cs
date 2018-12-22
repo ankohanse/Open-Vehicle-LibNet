@@ -26,15 +26,18 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenVehicle.LibNet.Entities;
 using OpenVehicle.LibNet.Helpers;
+
+#if OPENVEHICLE_LIBNET_LOG
 using OpenVehicle.LibNet.Logging;
+#elif OPENVEHICLE_LIBNET_NLOG 
+using NLog;
+#endif
 
 namespace OpenVehicle.LibNet
 {
@@ -131,6 +134,8 @@ namespace OpenVehicle.LibNet
         // For logging from the library
         // LibLog is compatible with NLog, Log4Net, SeriLog, Loupe in calling application
         private static readonly ILog    logger              = OpenVehicle.LibNet.Logging.LogProvider.For<OVMSConnection>();
+#elif OPENVEHICLE_LIBNET_NLOG 
+        private static NLog.Logger      logger              = NLog.LogManager.GetCurrentClassLogger();
 #else 
         private static readonly ILog    logger              = null;
 #endif 
@@ -142,7 +147,6 @@ namespace OpenVehicle.LibNet
         private Task                    m_loopTask          = null;
         private volatile SemaphoreSlim  m_loopSemaphore     = new SemaphoreSlim(1);
         private volatile bool           m_loopIsRunning     = false;
-        private volatile AutoResetEvent m_loopStopped       = new AutoResetEvent(false);
 
         // Periodic ping to keep connection to server alive
         private Timer                   m_pingTimer         = null;
@@ -181,7 +185,7 @@ namespace OpenVehicle.LibNet
             }
             catch (Exception ex)
             {
-                logger.ErrorException("Error in OVMSService.StartAsync. ", ex);
+                logger.Error(ex, "Error in OVMSService.StartAsync. ");
             }        
             finally
             {
@@ -201,7 +205,7 @@ namespace OpenVehicle.LibNet
             }
             catch (Exception ex)
             {
-                logger.ErrorException("Error in OVMSService.StopAsync. ", ex);
+                logger.Error(ex, "Error in OVMSService.StopAsync. ");
             }        
             finally
             {
@@ -225,8 +229,6 @@ namespace OpenVehicle.LibNet
             {
                 await m_loopTask;
                 m_loopTask = null;
-
-                //AJH m_loopStopped.WaitOne();
             }
 
             logger.Info("Stopped OVMS connection");
@@ -302,9 +304,6 @@ namespace OpenVehicle.LibNet
 
                 await PublishProgressAsync(ProgressType.Disconnect, SelectedCarSettings.ovms_server);
             }
-
-            // Signal the main loop has now stopped
-            //AJH m_loopStopped.Set();
         }
 
 #endregion Main Loop
@@ -377,7 +376,7 @@ namespace OpenVehicle.LibNet
 
         public bool IsCommandSupported(Command cmdCode)
         {
-            return CarData.command_support[ (int)cmdCode ];
+            return CarData.command_support[ (byte)cmdCode ];
         }
 
 
@@ -386,9 +385,9 @@ namespace OpenVehicle.LibNet
             OVMSMessage msg;
 
             if (string.IsNullOrEmpty(cmdText))
-                msg = new OVMSMessage('C', new string[] { cmdCode.ToString() } );
+                msg = new OVMSMessage('C', new string[] { $"{(byte)cmdCode}" } );
             else
-                msg = new OVMSMessage('C', new string[] { cmdCode.ToString(), cmdText } );
+                msg = new OVMSMessage('C', new string[] { $"{(byte)cmdCode}", cmdText } );
 
             await TransmitMessageAsync(msg);
         }
@@ -421,7 +420,7 @@ namespace OpenVehicle.LibNet
 
             if (line.Length < 6 || !line.StartsWith("MP-0 ") )
             {
-                logger.WarnFormat("*** Unknown protection scheme: {0}", line.Substring(0,5) );
+                logger.Warn( $"*** Unknown protection scheme: {line.Substring(0,5)}" );
                 return null;
             }
 
@@ -449,7 +448,7 @@ namespace OpenVehicle.LibNet
                     }
                     catch (Exception ex)
                     {
-                        logger.ErrorException("Error accepting the paranoid token. ", ex);
+                        logger.Error(ex, "Error accepting the paranoid token. ");
                     }
                 }
                 else if (pmCode == 'M')
@@ -474,7 +473,7 @@ namespace OpenVehicle.LibNet
                     }
                     catch (Exception ex)
                     {
-                        logger.ErrorException("Error decrypting the paranoid message. ", ex);
+                        logger.Error(ex, "Error decrypting the paranoid message. ");
                     }
                 }
 
@@ -486,7 +485,7 @@ namespace OpenVehicle.LibNet
                 }
             }
 
-            logger.TraceFormat("{0} MSG Received: {1}", msgCode, msgData);
+            logger.Trace( $"{msgCode} MSG Received: {msgData}" );
             string[] msgParams = (msgData != null) ? msgData?.Split( new char[] { ',' } ) : new string[0];
 
             return new OVMSMessage(msgCode,  msgParams);
@@ -574,7 +573,7 @@ namespace OpenVehicle.LibNet
             }
             catch (Exception ex)
             {
-                logger.ErrorException("{0} MSG Invalid. ", ex, msg.Code);
+                logger.Error(ex, "{0} MSG Invalid. ", msg.Code);
 
                 await PublishProgressAsync(ProgressType.Error, string.Format("{0} MSG Invalid.", msg.Code));
                 return false;
@@ -650,7 +649,7 @@ namespace OpenVehicle.LibNet
             }
             catch (Exception ex)
             {
-                logger.ErrorException("Error in PublishProgress callback. ", ex);
+                logger.Error(ex, "Error in PublishProgress callback. ");
             }
             await Task.Delay(0);
         }

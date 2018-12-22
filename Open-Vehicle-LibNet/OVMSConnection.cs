@@ -26,17 +26,19 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using OpenVehicle.LibNet.Entities;
 using OpenVehicle.LibNet.Helpers;
+
+#if OPENVEHICLE_LIBNET_LOG
 using OpenVehicle.LibNet.Logging;
+#elif OPENVEHICLE_LIBNET_NLOG 
+using NLog;
+#endif
 
 namespace OpenVehicle.LibNet
 {
@@ -101,16 +103,17 @@ namespace OpenVehicle.LibNet
 #if OPENVEHICLE_LIBNET_LOG
         // For logging from the library
         // LibLog is compatible with NLog, Log4Net, SeriLog, Loupe in calling application
-        private static readonly ILog logger     = LogProvider.For<OVMSConnection>();
+        private static readonly ILog    logger              = OpenVehicle.LibNet.Logging.LogProvider.For<OVMSConnection>();
+#elif OPENVEHICLE_LIBNET_NLOG 
+        private static NLog.Logger      logger              = NLog.LogManager.GetCurrentClassLogger();
 #else 
-        private static readonly ILog logger     = null;
-#endif
+        private static readonly ILog    logger              = null;
+#endif 
 
         // Our communication settings
         private CarSettings     m_carSettings   = null;
 
         // Socket communications
-        //private Socket          m_socket        = null;
         private TcpClient       m_socket        = null;
         private NetworkStream   m_socketStream  = null;
         private StreamReader    m_socketReader  = null;
@@ -284,7 +287,7 @@ namespace OpenVehicle.LibNet
         
         public async Task TransmitLineAsync(string msg)
         {
-            logger.TraceFormat("TX: {0}", msg);
+            logger.Trace( $"TX: {msg}" );
 
             if (m_socketWriter == null)
                 return;
@@ -324,7 +327,7 @@ namespace OpenVehicle.LibNet
                 msg = Encoding.UTF8.GetString(buf);
             }
 
-            logger.TraceFormat("RX: {0}", msg);
+            logger.Trace( $"RX: {msg}" );
             return msg;
         }
 

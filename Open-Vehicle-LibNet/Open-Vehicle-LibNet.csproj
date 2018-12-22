@@ -10,6 +10,9 @@
     <PackageProjectUrl>https://github.com/ankohanse/Open-Vehicle-Windows</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/ankohanse/Open-Vehicle-Windows/blob/master/LICENSE</PackageLicenseUrl>
     <PackageTags>Open Vehicle Monitoring System OVMS EV</PackageTags>
+    <Version>1.1.0</Version>
+    <FileVersion>1.1.0.0</FileVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
