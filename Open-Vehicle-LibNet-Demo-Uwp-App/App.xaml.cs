@@ -25,6 +25,8 @@
 ; THE SOFTWARE.
 */
 
+using NLog;
+using NLog.Targets;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -39,6 +41,10 @@ namespace OpenVehicle.Demo
     /// </summary>
     sealed partial class App : Application
     {
+        // Logging
+        private static NLog.Logger          logger          = NLog.LogManager.GetCurrentClassLogger();
+
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -47,7 +53,32 @@ namespace OpenVehicle.Demo
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+
+            // Init logging
+#if DEBUG
+            NLog.LogManager.ThrowExceptions = true;
+
+            var fileTarget = new NLog.Targets.FileTarget
+            {
+                Name            = "file",
+                FileName        = "${var:LogPath}\\nlog.txt",
+                Layout          = "${date}|${level}|${message}|${exception:format=tostring}",
+                ArchiveFileName = "${var:LogPath}\\nlog.{##}.txt",
+                ArchiveNumbering= ArchiveNumberingMode.Sequence,
+                ArchiveEvery    = FileArchivePeriod.Day,
+                MaxArchiveFiles = 5
+            };
+            var fileRule = new NLog.Config.LoggingRule("*", LogLevel.Trace, fileTarget);
+
+            NLog.LogManager.Configuration.AddTarget( "file", fileTarget );
+            NLog.LogManager.Configuration.LoggingRules.Add( fileRule );
+            NLog.LogManager.Configuration.Variables["LogPath"] = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+
+            NLog.LogManager.ReconfigExistingLoggers();
+#endif
         }
+
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points

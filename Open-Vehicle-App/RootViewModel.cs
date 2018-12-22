@@ -170,6 +170,7 @@ namespace OpenVehicle.App
         {
             // Propagate selected car from AppSettings into CarSettings
             AppSettings.UpdateCarSettings();
+            logger.Info( $"Switch to car: {CarSettings.vehicle_id}" );
 
             // Propagate other AppSettings used by the OVMSService
             OVMSPreferences.Instance.UnitForTemperature = (AppSettings.UnitTemperature=="F") ? OVMSPreferences.UnitTemperature.Fahrenheit : OVMSPreferences.UnitTemperature.Celcius;
@@ -196,14 +197,17 @@ namespace OpenVehicle.App
             switch (pt)
             {
                 case OVMSService.ProgressType.ConnectBegin:
+                    logger.Debug("Connecting");
                     ConnectStatus = "Connecting...";
                     break;
 
                 case OVMSService.ProgressType.ConnectComplete:
+                    logger.Debug("Connected");
                     ConnectStatus = "Connected";
                     break;
 
                 case OVMSService.ProgressType.Disconnect:
+                    logger.Debug("Disconnected");
                     ConnectStatus = "Disconnected";
                     break;
 
@@ -242,22 +246,27 @@ namespace OpenVehicle.App
             switch (resCode)
             {
                 case "0":  // ok
+                    logger.Debug("Command result: Success.");
                     App.RootPage.ShowPopup("Command result", "Success.");
                     break;
 
                 case "1":  // failed
+                    logger.Debug("Command result: Failed.");
                     App.RootPage.ShowPopup("Command result", "Failed.\n" + resText);
                     break;
 
                 case "2":  // unsupported
+                    logger.Debug("Command result: Not supported.");
                     App.RootPage.ShowPopup("Command result", "Not supported.\n" + resText);
                     break;
 
                 case "3":  // unimplemented
+                    logger.Debug("Command result: Not implemented.");
                     App.RootPage.ShowPopup("Command result", "Not implemented.\n" + resText);
                     break;
 
                 default:   // error
+                    logger.Debug("Command result: Error. " + resText);
                     App.RootPage.ShowPopup("Command result", "Error.\n" + resText);
                     break;
             }
@@ -282,6 +291,8 @@ namespace OpenVehicle.App
                               .Where(   r => r.StartsWith(PrefixCarOutlines) )
                               .OrderBy( r => r )
                               .ToDictionary(r => r.Substring(PrefixCarOutlines.Length), r => r );
+
+            logger.Debug( $"Detected assets for {AppCarImages.Count} cars." );
         }
 
 

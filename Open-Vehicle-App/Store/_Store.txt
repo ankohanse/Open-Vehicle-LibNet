@@ -1,4 +1,34 @@
-﻿Product Name:
+﻿
+---
+Pricing & Availability:
+- Exclude China  ("Your app uses mapping services that are not approved by the State Bureau of Surveying and Mapping in China.")
+
+
+---
+Category:
+Lifestyle -> Automotive
+
+
+Privacy policy url:
+https://www.openvehicles.com/privacypolicy
+
+Website:
+https://www.openvehicles.com
+
+Support contact info:
+https://github.com/openvehicles
+
+
+---
+Packages - Device family
+- Windows 10 Desktop
+- Windows 10 Mobile
+- Windows 10 XBox
+- Windows 10 Team
+
+
+---
+Product Name:
 Open Vehicle Monitoring System
 
 
@@ -19,9 +49,9 @@ What is it?
 The Open Vehicle Monitoring System is three things:
 1. A low-cost open-source module that fits in the car (available on the OVMS site). It is powered by the car, talks to the car on the CAN bus, and uses the GSM cellular network to talk to its user.
 2. A server (provided by the OVMS project). The car module can be configured to either talk to the server (via UDP/IP or TCP/IP over the Internet) or the user directly (via SMS).
-3. A cellphone App (this app). This talks to the server (via TCP/IP HTTP protocol) to retrieve messages from the car and issue instructions.
+3. A pc/laptop/tablet/mobile App (this app). This talks to the server (via TCP/IP HTTP protocol) to retrieve messages from the car and issue instructions.
 
-* Renault Twizy, Chevy Volt, Vauxhall Ampera, and Tesla Roadster are trademarks of their respective companies, and in no way affiliated with this App.
+* Renault Twizy, Chevy Volt, Vauxhall Ampera, Nissan Leaf, Kia Soul and Tesla Roadster are trademarks of their respective companies, and in no way affiliated with this App.
 
 
 ---
@@ -64,7 +94,7 @@ Supplemental fields
 - Short Descr:   -
 
 Additional system requirements:
--
+The app requires an OVMS car module being installed in the vehicle
 
 ---
 Additional information:
@@ -88,4 +118,4 @@ Open Vehicles Ltd
 ---
 Subission information:
 On first use the application will automatically use a demo account.
-This demo account can be removed by the user once he defines at least one additional car definition via Settings.
+This demo account can be removed by the user once he defines a car definition for his own vehicle via Settings.

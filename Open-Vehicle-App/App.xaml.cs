@@ -25,6 +25,8 @@
 ; THE SOFTWARE.
 */
 
+using NLog;
+using NLog.Targets;
 using OpenVehicle.App.Tasks;
 using System;
 using System.Reflection;
@@ -87,6 +89,32 @@ namespace OpenVehicle.App
             this.Resuming          += OnResuming;
             this.EnteredBackground += OnEnteredBackground;
             this.LeavingBackground += OnLeavingBackground;
+
+            // Init logging
+#if DEBUG
+            NLog.LogManager.ThrowExceptions = true;
+
+            var fileTarget = new NLog.Targets.FileTarget
+            {
+                Name            = "file",
+                FileName        = "${var:LogPath}\\nlog.txt",
+                Layout          = "${date}|${level}|${message}|${exception:format=tostring}",
+                ArchiveFileName = "${var:LogPath}\\nlog.{##}.txt",
+                ArchiveNumbering= ArchiveNumberingMode.Sequence,
+                ArchiveEvery    = FileArchivePeriod.Day,
+                MaxArchiveFiles = 5
+            };
+            var fileRule = new NLog.Config.LoggingRule("*", LogLevel.Trace, fileTarget);
+
+            NLog.LogManager.Configuration.AddTarget( "file", fileTarget );
+            NLog.LogManager.Configuration.LoggingRules.Add( fileRule );
+            NLog.LogManager.Configuration.Variables["LogPath"] = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+
+            NLog.LogManager.ReconfigExistingLoggers();
+#endif
+
+            logger.Info("------------------------------------");
+            logger.Info("App starting");
         }
 
 
@@ -171,6 +199,9 @@ namespace OpenVehicle.App
             var deferral = e.GetDeferral();
             try
             {
+                logger.Info("------------------------------------");
+                logger.Info("App entered background");
+
                 await RootViewModel.StopAsync();
             }
             catch (Exception)
@@ -188,6 +219,9 @@ namespace OpenVehicle.App
             var deferral = e.GetDeferral();
             try
             {
+                logger.Info("------------------------------------");
+                logger.Info("App leaving background");
+
                 await RootViewModel.StartAsync();
 
                 // Re-register background tasks

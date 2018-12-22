@@ -48,6 +48,10 @@ namespace OpenVehicle.App
     /// </summary>
     public partial class RootPage : Page, INotifyPropertyChanged
     {
+        // Logging
+        private static NLog.Logger  logger          = NLog.LogManager.GetCurrentClassLogger();
+
+        // RootPage Instance
         public static RootPage      Instance;
 
         public Frame                RootFrame       => rootFrame;
@@ -113,6 +117,8 @@ namespace OpenVehicle.App
                 }
             }
 
+            logger.Info( $"Switch to page: {sTag}" );
+            
             switch (sTag)
             {
                 default:

@@ -100,6 +100,7 @@ namespace OpenVehicle.Demo
             Console.WriteLine();
             Console.WriteLine("Enter your OVMS Shell command.");
             Console.WriteLine("Examples:");
+            Console.WriteLine("    stat");
             Console.WriteLine("    config list");
             Console.WriteLine("    config list vehicle");
             Console.WriteLine("    metrics list         (can be slow to respond)");
