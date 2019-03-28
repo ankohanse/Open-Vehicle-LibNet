@@ -575,7 +575,9 @@ namespace OpenVehicle.LibNet
             {
                 logger.Error(ex, "{0} MSG Invalid. ", msg.Code);
 
+                #if DEBUG
                 await PublishProgressAsync(ProgressType.Error, string.Format("{0} MSG Invalid.", msg.Code));
+                #endif
                 return false;
             }
         }

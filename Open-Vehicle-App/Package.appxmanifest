@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" IgnorableNamespaces="uap mp uap4">
-  <Identity Name="20823ANKO.OpenVehicleMonitoringSystem" Publisher="CN=C420F109-A0DF-41CA-B776-F053BCF7A73C" Version="1.0.0.0" />
+  <Identity Name="20823ANKO.OpenVehicleMonitoringSystem" Publisher="CN=C420F109-A0DF-41CA-B776-F053BCF7A73C" Version="1.0.2.0" />
   <mp:PhoneIdentity PhoneProductId="2762397f-04a8-40b5-b947-cae7037bebe6" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Open Vehicle Monitoring System</DisplayName>
