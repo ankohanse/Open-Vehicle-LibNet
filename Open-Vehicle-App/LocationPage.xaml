@@ -27,7 +27,7 @@
             ZoomInteractionMode="GestureAndControl"
             ZoomLevel="12"
             Style="Road"
-            Center="{x:Bind CarData.pos_geopoint, Mode=OneWay}"
+            Center="{x:Bind Geopoint(CarData.pos_latitude, CarData.pos_longitude, CarData.pos_altitude), Mode=OneWay}"
             Heading="0"
             DesiredPitch="0"
             LandmarksVisible="True"
@@ -39,7 +39,7 @@
                 Width="40"
                 Height="40"
                 maps:MapControl.NormalizedAnchorPoint="0.5,0.5"
-                maps:MapControl.Location="{x:Bind CarData.pos_geopoint, Mode=OneWay}" />
+                maps:MapControl.Location="{x:Bind Geopoint(CarData.pos_latitude, CarData.pos_longitude, CarData.pos_altitude), Mode=OneWay}" />
 
         </maps:MapControl>
 

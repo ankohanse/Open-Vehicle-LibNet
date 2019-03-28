@@ -32,7 +32,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Windows.Devices.Geolocation;
 
 namespace OpenVehicle.LibNet.Entities
 {
@@ -149,7 +148,8 @@ namespace OpenVehicle.LibNet.Entities
         public int          charge_estimate                     { get; private set; } = 0;
         public int          charge_b4                           { get; private set; } = 0;
         public int          charge_kwhconsumed_i_raw            { get; private set; } = 0;
-        public string       charge_kwhconsumed                  => $"{charge_kwhconsumed_i_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}KWh";  
+        public float        charge_kwhconsumed_f_raw            => charge_kwhconsumed_i_raw / 10.0f; 
+        public string       charge_kwhconsumed                  => $"{charge_kwhconsumed_f_raw:0.0}{OVMSPreferences.Instance.UnitSpacer}KWh";  
 
         public int          charge_timermode_raw                { get; private set; } = 0;
         public bool         charge_timer                        => (charge_timermode_raw > 0);
@@ -180,8 +180,6 @@ namespace OpenVehicle.LibNet.Entities
         public double       pos_longitude                       { get; private set; } = 0.0;
         public double       pos_direction                       { get; private set; } = 0.0;
         public double       pos_altitude                        { get; private set; } = 0.0;
-        public BasicGeoposition  pos_geoposition                => GetGeoposition(pos_latitude, pos_longitude, pos_altitude);
-        public Geopoint          pos_geopoint                   => new Geopoint(pos_geoposition);
         public int          pos_gpslock_raw                     { get; private set; } = 0;
         public bool         pos_gpslock                         => (pos_gpslock_raw > 0) ? true : false;
         public float        pos_gpsspeed_raw                    { get; private set; } = 0.0f;
@@ -234,9 +232,9 @@ namespace OpenVehicle.LibNet.Entities
 
         public float        temp_pem_raw                        { get; private set; } = 0;
         public string       temp_pem                            => ConvertTemperatureUnit(temp_pem_raw); 
-        public int          temp_motor_raw                      { get; private set; } = 0;
+        public float        temp_motor_raw                      { get; private set; } = 0;
         public string       temp_motor                          => ConvertTemperatureUnit(temp_motor_raw); 
-        public int          temp_battery_raw                    { get; private set; } = 0;
+        public float        temp_battery_raw                    { get; private set; } = 0;
         public string       temp_battery                        => ConvertTemperatureUnit(temp_battery_raw); 
         public float        temp_charger_raw                    { get; private set; } = 0.0f;
         public string       temp_charger                        => ConvertTemperatureUnit(temp_charger_raw); 
@@ -422,17 +420,6 @@ namespace OpenVehicle.LibNet.Entities
         }
 
 
-        private BasicGeoposition GetGeoposition(double latitude, double longitude, double altitude = 0.0)
-        {
-            return new BasicGeoposition()
-            {
-                Latitude  = latitude,
-                Longitude = longitude,
-                Altitude  = altitude
-            };
-        }
-
-
         internal string GetChargeState(int key)
         {
             switch (key)
@@ -484,7 +471,7 @@ namespace OpenVehicle.LibNet.Entities
                 case 1:  return "Type 1";
                 case 2:  return "Type 2";
                 case 3:  return "ChaDeMo";
-                case 4:  return "Toadster";        
+                case 4:  return "Roadster";        
                 case 5:  return "Tesla-US";  
                 case 6:  return "SuperCharger";  
                 case 7:  return "CSS";  
@@ -705,8 +692,8 @@ namespace OpenVehicle.LibNet.Entities
                 env_flags2_raw                      = int.Parse(msg.Params[1]);
                 env_lockstate_raw                   = int.Parse(msg.Params[2]);
                 temp_pem_raw                        = float.Parse(msg.Params[3]);
-                temp_motor_raw                      = int.Parse(msg.Params[4]);
-                temp_battery_raw                    = int.Parse(msg.Params[5]);
+                temp_motor_raw                      = float.Parse(msg.Params[4]);
+                temp_battery_raw                    = float.Parse(msg.Params[5]);
                 pos_tripmeter_raw                   = float.Parse(msg.Params[6]) / 10.0f;
                 pos_odometer_raw                    = float.Parse(msg.Params[7]) / 10.0f;
                 pos_speed_raw                       = float.Parse(msg.Params[8]);

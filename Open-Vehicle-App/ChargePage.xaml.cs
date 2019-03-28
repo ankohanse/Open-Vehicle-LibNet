@@ -52,9 +52,15 @@ namespace OpenVehicle.App
         private bool   ChargeStopButtonVisible      => OVMSService.Instance.IsCommandSupported( OVMSService.Command.ChargeStop );
 
 
-        private string FormatMins(Int32 val)
+        private string FormatHoursMins(Int32 valMins)
         {
-            return $"{val} mins";
+            int hours = valMins / 60;
+            int mins  = valMins % 60;
+
+            if (hours > 0)
+                return $"{hours}h {mins:D2}m";
+            else
+                return $"{mins}m";
         }
 
         private string FormatUntil(string val)

@@ -28,6 +28,9 @@
 using OpenVehicle.App.Entities;
 using OpenVehicle.LibNet.Entities;
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Windows.Devices.Geolocation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -39,13 +42,13 @@ namespace OpenVehicle.App
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LocationPage : Page
+    public partial class LocationPage : Page, INotifyPropertyChanged
     {
 
         // For use in x:Bind
         private CarData         CarData             => App.RootViewModel.CarData;
         private AppCarSettings  CarSettings         => App.RootViewModel.CarSettings;
-        
+
 
         private Visibility VisibleIfParked(int parkedtime)
         {
@@ -64,6 +67,19 @@ namespace OpenVehicle.App
                 return Visibility.Visible;
         }
        
+
+        private Geopoint Geopoint(double latitude, double longitude, double altitude = 0.0)
+        {
+            return new Geopoint(
+                new BasicGeoposition()
+                {
+                    Latitude  = latitude,
+                    Longitude = longitude,
+                    Altitude  = altitude
+                }
+            );
+        }
+
 
         private string HeadingFromDirection(double value)
         {
@@ -110,5 +126,18 @@ namespace OpenVehicle.App
         }
 
 
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        
+
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            // Raise the PropertyChanged event, passing the name of the property whose value has changed.
+            this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion INotifyPropertyChanged    
+        
     }
 }

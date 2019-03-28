@@ -10,6 +10,40 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <!-- VisualState to be triggered when window
+                                     width is >=720 effective pixels. -->
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <!-- <Setter Target="PlugImage.Height" Value="100" /> -->
+                        <Setter Target="ProgressControl.Width" Value="200" />
+                        <Setter Target="ProgressControl.Height" Value="60" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <!-- VisualState to be triggered when window
+                                     width is < 720 effective pixels. -->
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <!-- <Setter Target="PlugImage.Height" Value="60" /> -->
+                        <Setter Target="ProgressControl.Width" Value="130" />
+                        <Setter Target="ProgressControl.Height" Value="40" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"></ColumnDefinition>
@@ -18,11 +52,12 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
 
             <!-- TODO: Hide individual lines when they do not contain valid data for the current car model -->
-            
+
             <StackPanel 
                 Grid.Row="0"
                 Grid.RowSpan="2"
@@ -54,8 +89,8 @@
                     <usercontrol:ChargePageItem LabelText="Sub state" ValueText="{x:Bind CarData.charge_substate, Mode=OneWay}" />
                     <usercontrol:ChargePageItem LabelText="Mode" ValueText="{x:Bind CarData.charge_mode, Mode=OneWay}" />
 
-                    <usercontrol:ChargePageItem LabelText="Duration" ValueText="{x:Bind FormatMins(CarData.charge_duration), Mode=OneWay}" Padding="0,20,0,0" />
-                    <usercontrol:ChargePageItem LabelText="Estimate" ValueText="{x:Bind FormatMins(CarData.charge_estimate), Mode=OneWay}" />
+                    <usercontrol:ChargePageItem LabelText="Duration" ValueText="{x:Bind FormatHoursMins(CarData.charge_duration), Mode=OneWay}" Padding="0,20,0,0" />
+                    <usercontrol:ChargePageItem LabelText="Estimate" ValueText="{x:Bind FormatHoursMins(CarData.charge_estimate), Mode=OneWay}" />
 
                     <usercontrol:ChargePageItem LabelText="Type" ValueText="{x:Bind CarData.charge_plugtype, Mode=OneWay}" Padding="0,20,0,0" />
                     <usercontrol:ChargePageItem LabelText="Current" ValueText="{x:Bind CarData.charge_current, Mode=OneWay}" />
@@ -64,10 +99,10 @@
 
                     <usercontrol:ChargePageItem IsCaption="True" LabelText="Remaining" Visibility="{x:Bind CarData.env_charging, Converter={StaticResource booleanToVisibilityConverter}, Mode=OneWay}" Padding="0,20,0,0" />
                     <usercontrol:ChargePageItem IsCaption="True" LabelText="Duration" Visibility="{x:Bind CarData.env_charging, Converter={StaticResource booleanNegationToVisibilityConverter}, Mode=OneWay}" Padding="0,20,0,0" />
-                    <usercontrol:ChargePageItem LabelText="{x:Bind FormatMins(CarData.charge_full_minsremaining), Mode=OneWay}" ValueText="until full" />
-                    <usercontrol:ChargePageItem LabelText="{x:Bind FormatMins(CarData.charge_limit_minsremaining_soc), Mode=OneWay}" ValueText="{x:Bind FormatUntil(CarData.charge_limit_soclimit), Mode=OneWay}" />
-                    <usercontrol:ChargePageItem LabelText="{x:Bind FormatMins(CarData.charge_limit_minsremaining_range), Mode=OneWay}" ValueText="{x:Bind FormatUntil(CarData.charge_limit_rangelimit), Mode=OneWay}" />
-                    
+                    <usercontrol:ChargePageItem LabelText="until full" ValueText="{x:Bind FormatHoursMins(CarData.charge_full_minsremaining), Mode=OneWay}" />
+                    <usercontrol:ChargePageItem LabelText="{x:Bind FormatUntil(CarData.charge_limit_soclimit), Mode=OneWay}" ValueText="{x:Bind FormatHoursMins(CarData.charge_limit_minsremaining_soc), Mode=OneWay}" />
+                    <usercontrol:ChargePageItem LabelText="{x:Bind FormatUntil(CarData.charge_limit_rangelimit), Mode=OneWay}" ValueText="{x:Bind FormatHoursMins(CarData.charge_limit_minsremaining_range), Mode=OneWay}" />
+
                 </StackPanel>
 
                 <!-- Visible both whether or not charging, but only when a timer is NOT set -->
@@ -95,7 +130,7 @@
 
 
             <Image 
-                Grid.Row="0"
+                Grid.Row="1"
                 Grid.Column="1"
                 x:Name="CarImage"
                 Source="{x:Bind CarSettings.vehicle_image_resourcename, Converter={StaticResource manifestResourceNameToImageSourceConverter}, Mode=OneWay}"
@@ -112,47 +147,33 @@
 
             </Image>
 
-
+            <!--
             <Image
-                Grid.Row="1"
+                Grid.Row="0"
                 Grid.Column="1"
                 x:Name="PlugImage"
                 Source="ms-appx:///Assets/Misc/charger_plug.png"
                 Stretch="Uniform" 
-                Height="100"
-                HorizontalAlignment="Left"
+                Height="80"
+                HorizontalAlignment="Right"
                 />
+            -->
 
-
-
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState>
-                        <VisualState.StateTriggers>
-                            <!-- VisualState to be triggered when window
-                                 width is >=720 effective pixels. -->
-                            <AdaptiveTrigger MinWindowWidth="720" />
-                        </VisualState.StateTriggers>
-
-                        <VisualState.Setters>
-                            <Setter Target="PlugImage.Height" Value="100" />
-                        </VisualState.Setters>
-                    </VisualState>
-
-                    <VisualState>
-                        <VisualState.StateTriggers>
-                            <!-- VisualState to be triggered when window
-                                 width is < 720 effective pixels. -->
-                            <AdaptiveTrigger MinWindowWidth="0" />
-                        </VisualState.StateTriggers>
-
-                        <VisualState.Setters>
-                            <Setter Target="PlugImage.Height" Value="60" />
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
+            <usercontrol:ProgressImage 
+                Grid.Row="0"
+                Grid.Column="1"
+                x:Name="ProgressControl"
+                BackgroundImage="ms-appx:///Assets/Misc/battery_empty.png"
+                SliderImage="ms-appx:///Assets/Misc/battery_slider.png"
+                SliderAdjust="10"
+                Min="0"
+                Max="100"
+                Value="{x:Bind CarData.bat_soc_raw, Mode=OneWay}"
+                Width="150" 
+                Height="45"
+                />
 
         </Grid>
     </ScrollViewer>
+    
 </Page>

@@ -36,15 +36,15 @@
                 Text="{x:Bind ValueText, Mode=OneWay}" 
                 TextWrapping="Wrap" 
                 TextAlignment="Right"
-                Width="90"  
+                Width="80"  
                 Visibility="{x:Bind ShowValue, Converter={StaticResource booleanToVisibilityConverter}}" 
                 />
             <Button
                 x:Name="ButtonControl"
                 Content="{x:Bind ButtonText}"
-                Width="100" 
+                Width="80" 
                 VerticalAlignment="Center" 
-                Margin="20,0,0,0" 
+                Margin="10,0,0,0" 
                 Visibility="{x:Bind ShowButton, Converter={StaticResource booleanToVisibilityConverter}, Mode=OneWay}"
                 Click="OnButtonClick" />
         </StackPanel>
@@ -63,8 +63,8 @@
                         <Setter Target="PanelControl.Margin" Value="2" />
                         <Setter Target="CaptionControl.Width" Value="100" />
                         <Setter Target="LabelControl.Width" Value="100" />
-                        <Setter Target="ValueControl.Width" Value="70" />
-                        <Setter Target="ButtonControl.Width" Value="100" />
+                        <Setter Target="ValueControl.Width" Value="80" />
+                        <Setter Target="ButtonControl.Width" Value="70" />
                         <Setter Target="CaptionControl.FontSize" Value="14" />
                         <Setter Target="LabelControl.FontSize" Value="14" />
                         <Setter Target="ValueControl.FontSize" Value="14" />
@@ -81,9 +81,9 @@
 
                     <VisualState.Setters>
                         <Setter Target="PanelControl.Margin" Value="1" />
-                        <Setter Target="CaptionControl.Width" Value="60" />
-                        <Setter Target="LabelControl.Width" Value="60" />
-                        <Setter Target="ValueControl.Width" Value="70" />
+                        <Setter Target="CaptionControl.Width" Value="70" />
+                        <Setter Target="LabelControl.Width" Value="80" />
+                        <Setter Target="ValueControl.Width" Value="60" />
                         <Setter Target="ButtonControl.Width" Value="60" />
                         <Setter Target="CaptionControl.FontSize" Value="10" />
                         <Setter Target="LabelControl.FontSize" Value="10" />
